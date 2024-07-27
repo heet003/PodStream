@@ -1,0 +1,71 @@
+/* Button.css */
+
+.button {
+  font: inherit;
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background: #fca3a3;
+  /* Dark green */
+  color: white;
+  text-decoration: none;
+  display: inline-block;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.button:hover,
+.button:active {
+  background: #efefef;
+  color: black;
+  /* Darker green */
+  transform: scale(1.05);
+}
+
+.button--inverse {
+  margin: 10px auto;
+  background: white;
+  color: black;
+  /* Dark green */
+  border: 1px solid #2e7d32;
+  /* Dark green */
+}
+
+.button--inverse:hover,
+.button--inverse:active {
+  background: #15171E;
+  /* Light green */
+  color: white;
+  border: 1px solid #a5d6a7;
+  /* Light green */
+}
+
+.button--danger {
+  background: #d32f2f;
+  /* Red */
+  color: white;
+}
+
+.button--danger:hover,
+.button--danger:active {
+  background: #b71c1c;
+  /* Darker red */
+}
+
+.button--small {
+  padding: 0.25rem 1rem;
+  font-size: 0.8rem;
+}
+
+.button--large {
+  padding: 1rem 2rem;
+  font-size: 1.5rem;
+}
+
+.button:disabled,
+.button:disabled:hover,
+.button:disabled:active {
+  background: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}

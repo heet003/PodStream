@@ -1,0 +1,70 @@
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    padding-top: 1rem;
+    width: 300px;
+    background-color: rgba(0, 0, 0, 0.205);
+    color: white;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+.sidebar.open {
+    transform: translateX(0);
+}
+
+.logo-container {
+    padding: 4%;
+    margin-bottom: 5%;
+}
+
+.logo-container span {
+    font-size: 1.5rem;
+    margin: 1px 10px;
+    font-weight: bold;
+    color: #ff8a8a;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar li {
+    padding: 10px;
+    margin: 5px 0;
+}
+
+.FontAwesomeIcon {
+    display: inline;
+    margin: 1px 5px;
+}
+
+.sidebar a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    padding: 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar a:hover {
+    background-color: #303030;
+    color: #fff;
+}
+
+.sidebar a.active {
+    background-color: #666;
+}
+
+.logout-button a {
+    color: red;
+    font-size: 1rem;
+    font-style: oblique;
+}

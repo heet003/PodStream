@@ -1,0 +1,76 @@
+import React, { useState } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Navigate,
+  Routes,
+} from "react-router-dom";
+
+import Auth from "./components/Auth/Auth";
+import SideBar from "./components/SideBar/SideBar";
+import NavBar from "./components/NavBar/NavBar";
+import DashBoard from "./components/DashBoard/DashBoard";
+import { AuthContext } from "./components/context/auth-context";
+import { useAuth } from "./components/hooks/auth-hook";
+import Otp from "./components/Auth/Otp";
+import Content from "./components/Content";
+
+const App = () => {
+  const { token, login, logout, role } = useAuth();
+  const [isSidebarOpen, setSidebarOpen] = useState(true);
+
+  const toggleSidebar = () => {
+    setSidebarOpen((prev) => !prev);
+  };
+
+  let routes;
+
+  if (token) {
+    if (role === "user") {
+      routes = (
+        <Routes>
+          <Route path="/" element={<DashBoard />} />
+          <Route path="*" element={<Navigate to="/auth" replace />} />
+        </Routes>
+      );
+    } else {
+      routes = (
+        <Routes>
+          <Route path="/" element={<DashBoard />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      );
+    }
+  } else {
+    routes = (
+      <Routes>
+        <Route path="/" element={<DashBoard />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/verify-otp" element={<Otp />} />
+        <Route path="*" element={<Navigate to="/auth" replace />} />
+      </Routes>
+    );
+  }
+
+  return (
+    <AuthContext.Provider
+      value={{
+        isLoggedIn: !!token,
+        token: token,
+        role: role,
+        login: login,
+        logout: logout,
+      }}
+    >
+      <Router>
+        <SideBar isOpen={isSidebarOpen} onClose={toggleSidebar} />
+        <Content isOpen={isSidebarOpen}>
+          <NavBar onClick={toggleSidebar} />
+          <main>{routes}</main>
+        </Content>
+      </Router>
+    </AuthContext.Provider>
+  );
+};
+
+export default App;

@@ -1,0 +1,10 @@
+/* Content.css */
+.content {
+    transition: margin-left 0.3s ease;
+    padding: 20px;
+    margin-left: 0;
+}
+
+.content.shifted {
+    margin-left: 300px;
+}
