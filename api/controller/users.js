@@ -1,9 +1,23 @@
 var express = require("express");
 var userRouter = express.Router();
+const axios = require("axios");
 var db = require("../lib/database");
 var helper = require("../core/helper");
 const ACCESSTOKEN = "AccessToken";
 
+// const options = {
+//   method: "GET",
+//   url: "https://spotify-scraper.p.rapidapi.com/v1/search",
+//   params: {
+//     term: "development",
+//     type: "podcast",
+//     limit: "100",
+//   },
+//   headers: {
+//     "x-rapidapi-key": "dfeee1f073msh5f9bc151904928cp1f3eddjsn35fd98560012",
+//     "x-rapidapi-host": "spotify-scraper.p.rapidapi.com",
+//   },
+// };
 let user = {};
 
 user.signup = (req, res) => {
@@ -81,7 +95,7 @@ user.signup = (req, res) => {
     });
 };
 
-user.login = (req, res) => {
+user.login = async (req, res) => {
   const { email, password } = req.body;
 
   var existingUser;
@@ -101,6 +115,7 @@ user.login = (req, res) => {
       if (!existingUser) {
         return Promise.reject(403);
       }
+
       return helper.md5(password);
     })
     .then(async (hash) => {

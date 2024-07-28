@@ -10,7 +10,13 @@ var compression = require("compression");
 app.use(compression());
 
 app
-  .use(cors())
+  .use(
+    cors({
+      origin: "http://localhost:3000",
+      methods: ["GET", "POST"],
+      credentials: true,
+    })
+  )
   .use(bodyParser.json({ limit: "5mb" }))
   .use(bodyParser.urlencoded({ limit: "5mb", extended: true }))
 

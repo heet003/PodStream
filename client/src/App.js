@@ -13,7 +13,10 @@ import DashBoard from "./components/DashBoard/DashBoard";
 import { AuthContext } from "./components/context/auth-context";
 import { useAuth } from "./components/hooks/auth-hook";
 import Otp from "./components/Auth/Otp";
-import Content from "./components/Content";
+import Content from "./components/Content/Content";
+import SearchPodcast from "./components/Search/SearchPodcast";
+import Favourites from "./components/Favourites/Favourites";
+import PodcastDetails from "./components/Shared/UIElements/PodcastDetails";
 
 const App = () => {
   const { token, login, logout, role } = useAuth();
@@ -30,13 +33,19 @@ const App = () => {
       routes = (
         <Routes>
           <Route path="/" element={<DashBoard />} />
-          <Route path="*" element={<Navigate to="/auth" replace />} />
+          <Route path="/favourites" element={<Favourites />} />
+          <Route path="/podcast/:id" element={<PodcastDetails />} />
+          <Route path="/search" element={<SearchPodcast />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       );
     } else {
       routes = (
         <Routes>
           <Route path="/" element={<DashBoard />} />
+          <Route path="/favourites" element={<Favourites />} />
+          <Route path="/podcast/:id" element={<PodcastDetails />} />
+          <Route path="/search" element={<SearchPodcast />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       );
@@ -46,6 +55,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<DashBoard />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/search" element={<SearchPodcast />} />
         <Route path="/verify-otp" element={<Otp />} />
         <Route path="*" element={<Navigate to="/auth" replace />} />
       </Routes>

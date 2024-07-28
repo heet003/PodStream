@@ -1,0 +1,68 @@
+.fav-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.fav-container input[type="text"] {
+    padding: 10px;
+    width: 300px;
+    background-color: #15171E;
+    border: none;
+    border-bottom: 1px solid white;
+    color: white;
+    outline: none;
+    font-size: 1.1rem;
+}
+
+.fav-container .FontAwesomeIcon {
+    margin-left: -30px;
+    margin-top: 10px;
+    cursor: pointer;
+    color: #1677ff;
+}
+
+.genres-box {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.genre-item {
+    width: 20%;
+    height: 30vh;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.genre-item:hover {
+    color: #15171E;
+    transform: translateY(-10px);
+    box-shadow: 10px 10px 4px 1px rgba(215, 215, 215, 0.292);
+}
+
+.genre-item h2 {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+}
+
+.genre-img {
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    width: 50%;
+    transform: translateY(20%) translateX(-110%) rotate(30deg);
+    height: auto;
+    opacity: 1;
+}

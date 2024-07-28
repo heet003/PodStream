@@ -7,6 +7,7 @@ module.exports = function (app) {
       prefix + "/",
       prefix + "/api/users/signup",
       prefix + "/api/users/login",
+      prefix + "/api/podcasts/",
     ];
 
     // console.log("no auth url: ",req.body)
@@ -16,6 +17,7 @@ module.exports = function (app) {
         c =
           !noAuthURL.includes(req.originalUrl) &&
           req.originalUrl.search("favicon.ico") == -1;
+
         if (c) {
           return helper.token.verify(req);
         }

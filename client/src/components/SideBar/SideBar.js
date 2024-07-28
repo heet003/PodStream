@@ -13,7 +13,7 @@ import {
 import "./SideBar.css";
 
 function SideBar({ isOpen, onClose }) {
-  const { token } = useAuth();
+  const { token, logout, role } = useAuth();
 
   return (
     <React.Fragment>
@@ -50,18 +50,20 @@ function SideBar({ isOpen, onClose }) {
               </Link>
             </li>
             <hr />
-            <li>
-              <Link to={`/upload`} className="w3-button">
-                <FontAwesomeIcon
-                  className="FontAwesomeIcon"
-                  icon={faCloudArrowUp}
-                />
-                Upload
-              </Link>
-            </li>
+            {token && role !== "user" && (
+              <li>
+                <Link to={`/upload`} className="w3-button">
+                  <FontAwesomeIcon
+                    className="FontAwesomeIcon"
+                    icon={faCloudArrowUp}
+                  />
+                  Upload
+                </Link>
+              </li>
+            )}
             {token ? (
               <li className="logout-button">
-                <Link to={`/auth`}>
+                <Link to={`/auth`} onClick={logout}>
                   <FontAwesomeIcon
                     className="FontAwesomeIcon"
                     icon={faArrowRightToBracket}
