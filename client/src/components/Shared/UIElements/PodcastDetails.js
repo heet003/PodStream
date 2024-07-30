@@ -3,9 +3,10 @@ import { useParams } from "react-router-dom";
 import { useAuth } from "../../hooks/auth-hook";
 import ErrorModal from "./ErrorModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import { faHeart, faPlay } from "@fortawesome/free-solid-svg-icons";
 import LoadingSpinner from "./LoadingSpinner";
 import { useHttpClient } from "../../hooks/http-hook";
+import { format } from "date-fns";
 import "./PodcastCard.css";
 
 function PodcastDetails(props) {
@@ -54,6 +55,10 @@ function PodcastDetails(props) {
     return `${minutes} min ${seconds} sec`;
   };
 
+  const formatDate = (dateString) => {
+    return format(new Date(dateString), "MMMM d, yyyy");
+  };
+
   async function handleLike() {
     const resData = await sendRequest(
       `http://localhost:5000/api/podcasts/like/${id}`,
@@ -84,41 +89,42 @@ function PodcastDetails(props) {
             </div>
             <div>
               <div>
-                <h2 className="pod-h2">{data.name}</h2>
-                <button
-                  className={`like-button ${isLiked ? "liked" : "notliked"}`}
-                  onClick={handleLike}
-                >
-                  <FontAwesomeIcon icon={faHeart} />
-                </button>
+                <h2 className="pod-h2">
+                  {data.name}
+                  <button
+                    className={`like-button ${isLiked ? "liked" : "notliked"}`}
+                    onClick={handleLike}
+                  >
+                    <FontAwesomeIcon icon={faHeart} />
+                  </button>
+                </h2>
+                <h3 className="pod-h3">{data.podcast.name}</h3>
               </div>
-              <p className="pod-date">
-                <strong>Date:</strong>
-                {new Date(data.date).toLocaleDateString()}
-              </p>
-              <p className="pod-desc">
-                <strong>Description:</strong> {data.description}
-              </p>
-              <p className="pod-duration">
-                <strong>Duration:</strong> {formatDuration(data.durationMs)}
-              </p>
-              <p className="pod-exp">
-                <strong>Explicit Content:</strong>{" "}
-                {data.explicit ? "Yes" : "No"}
-              </p>
-              <a
-                className="pod-listen"
-                href={data.shareUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Listen on Spotify
+              <a href={data.shareUrl} target="_blank" rel="noopener noreferrer">
+                <FontAwesomeIcon
+                  className="play-details"
+                  icon={faPlay}
+                  style={{ color: "#8c00ff" }}
+                />
               </a>
+              <div>
+                <p className="pod-date">{formatDate(data.date)}</p>
+                <div className="dot" />
+                <p className="pod-duration">
+                  {formatDuration(data.durationMs)}
+                </p>
+                <p className="pod-exp">{data.explicit && "18+ Content"}</p>
+              </div>
+              <div className="desc-box">
+                <h3>Episode Description</h3>
+                <p className="pod-desc">{data.description}</p>
+              </div>
+
+              <audio className="pod-audio" controls>
+                <source src={data.audioPreviewUrl} type="audio/mpeg" />
+                Your browser does not support the audio element.
+              </audio>
             </div>
-            <audio className="pod-audio" controls>
-              <source src={data.audioPreviewUrl} type="audio/mpeg" />
-              Your browser does not support the audio element.
-            </audio>
           </div>
         )}
       </div>

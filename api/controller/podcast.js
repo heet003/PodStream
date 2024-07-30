@@ -142,11 +142,36 @@ podcast.userFavourites = async (req, res) => {
     });
 };
 
+podcast.getCategory = async (req, res) => {
+  const { userId } = req.uSession;
+  const { category } = req.params;
+  var results;
+  let promise = helper.paramValidate({ code: 2010, val: !userId });
+
+  promise
+    .then(async () => {
+      return await db._find(category.toLowerCase(), {});
+    })
+    .then(async (p) => {
+      results = p;
+      if (results.length < 0) {
+        return Promise.reject(403);
+      }
+    })
+    .then(() => {
+      helper.success(res, { results });
+    })
+    .catch((e) => {
+      helper.error(res, e);
+    });
+};
+
 module.exports = function (app, uri) {
   podRouter.get("/", podcast.getAll);
   podRouter.get("/:id", podcast.getPodcast);
   podRouter.get("/like/:id", podcast.likePodcast);
   podRouter.get("/user/likes", podcast.userLikedPodcasts);
   podRouter.get("/user/favourites", podcast.userFavourites);
+  podRouter.get("/category/:category", podcast.getCategory);
   app.use(uri, podRouter);
 };

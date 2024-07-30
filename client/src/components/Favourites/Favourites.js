@@ -51,6 +51,7 @@ function Favourites() {
       </div>
     </div>
   );
+  
   return (
     <React.Fragment>
       {isLoading && <LoadingSpinner asOverlay />}
