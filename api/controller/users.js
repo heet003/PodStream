@@ -9,7 +9,7 @@ const ACCESSTOKEN = "AccessToken";
 //   method: "GET",
 //   url: "https://spotify-scraper.p.rapidapi.com/v1/search",
 //   params: {
-//     term: "development",
+//     term: "news",
 //     type: "podcast",
 //     limit: "100",
 //   },

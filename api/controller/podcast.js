@@ -39,7 +39,7 @@ podcast.getPodcast = async (req, res) => {
     .then((p) => {
       details = p[0];
       if (!details) {
-        return Promise.reject(403);
+        return Promise.reject(1001);
       }
     })
     .then(() => helper.success(res, { details }))

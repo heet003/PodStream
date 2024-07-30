@@ -6,12 +6,20 @@ import LoadingSpinner from "../Shared/UIElements/LoadingSpinner";
 import { useHttpClient } from "../hooks/http-hook";
 import { AuthContext } from "../context/auth-context";
 import { useNavigate } from "react-router-dom";
+import { message } from "antd";
 
 const Auth = () => {
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
-
+  const [messageApi, contextHolder] = message.useMessage();
+  const success = () => {
+    console.log("Hello");
+    messageApi.open({
+      type: "success",
+      content: "This is a success message",
+    });
+  };
   const [isLoginMode, setIsLoginMode] = useState(true);
 
   const [formState, setFormState] = useState({
@@ -45,10 +53,8 @@ const Auth = () => {
     }));
   };
 
-  // Submit handler for login or signup
   const authSubmitHandler = async (event) => {
     event.preventDefault();
-
     let responseData;
     if (isLoginMode) {
       responseData = await sendRequest(
@@ -85,9 +91,10 @@ const Auth = () => {
 
   return (
     <React.Fragment>
+      {contextHolder}
+      {isLoading && <LoadingSpinner asOverlay />}
       <ErrorModal error={error} onClear={clearError} />
       <div className="authentication">
-        {isLoading && <LoadingSpinner asOverlay />}
         <h2 className="form_header">Login Required</h2>
         <hr />
         <form className="auth_form" onSubmit={authSubmitHandler}>

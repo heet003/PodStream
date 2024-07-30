@@ -39,7 +39,6 @@ function PodcastDetails(props) {
         }
       );
       const userLikes = responseData.likes;
-      console.log(userLikes);
       const liked = userLikes.some((like) => like.podcastId === id);
       setIsLiked(liked);
     }
@@ -50,12 +49,18 @@ function PodcastDetails(props) {
   }, [token, sendRequest, id]);
 
   const formatDuration = (ms) => {
+    if (!ms) {
+      return null;
+    }
     const minutes = Math.floor(ms / 60000);
     const seconds = ((ms % 60000) / 1000).toFixed(0);
     return `${minutes} min ${seconds} sec`;
   };
 
   const formatDate = (dateString) => {
+    if (!dateString) {
+      return null;
+    }
     return format(new Date(dateString), "MMMM d, yyyy");
   };
 
@@ -79,14 +84,16 @@ function PodcastDetails(props) {
         <ErrorModal error={error} onClear={clearError} />
         {data && (
           <div className="pod-details">
-            <div>
-              <img
-                className="pod-cover"
-                src={data.cover[1].url}
-                alt="Cover"
-                width="300"
-              />
-            </div>
+            {data.cover && data.cover[1] && data.cover[1].url && (
+              <div>
+                <img
+                  className="pod-cover"
+                  src={data.cover[1].url}
+                  alt="Cover"
+                  width="300"
+                />
+              </div>
+            )}
             <div>
               <div>
                 <h2 className="pod-h2">
@@ -98,32 +105,47 @@ function PodcastDetails(props) {
                     <FontAwesomeIcon icon={faHeart} />
                   </button>
                 </h2>
-                <h3 className="pod-h3">{data.podcast.name}</h3>
+                {data.podcast && data.podcast.name && (
+                  <h3 className="pod-h3">{data.podcast.name}</h3>
+                )}
               </div>
-              <a href={data.shareUrl} target="_blank" rel="noopener noreferrer">
-                <FontAwesomeIcon
-                  className="play-details"
-                  icon={faPlay}
-                  style={{ color: "#8c00ff" }}
-                />
-              </a>
+              {data.shareUrl && (
+                <a
+                  href={data.shareUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <FontAwesomeIcon
+                    className="play-details"
+                    icon={faPlay}
+                    style={{ color: "#8c00ff" }}
+                  />
+                </a>
+              )}
               <div>
-                <p className="pod-date">{formatDate(data.date)}</p>
+                {data.date && (
+                  <p className="pod-date">{formatDate(data.date)}</p>
+                )}
                 <div className="dot" />
-                <p className="pod-duration">
-                  {formatDuration(data.durationMs)}
-                </p>
-                <p className="pod-exp">{data.explicit && "18+ Content"}</p>
+                {data.durationMs && (
+                  <p className="pod-duration">
+                    {formatDuration(data.durationMs)}
+                  </p>
+                )}
+                {data.explicit && <p className="pod-exp">18+ Content</p>}
               </div>
-              <div className="desc-box">
-                <h3>Episode Description</h3>
-                <p className="pod-desc">{data.description}</p>
-              </div>
-
-              <audio className="pod-audio" controls>
-                <source src={data.audioPreviewUrl} type="audio/mpeg" />
-                Your browser does not support the audio element.
-              </audio>
+              {data.description && (
+                <div className="desc-box">
+                  <h3>Episode Description</h3>
+                  <p className="pod-desc">{data.description}</p>
+                </div>
+              )}
+              {data.audioPreviewUrl && (
+                <audio className="pod-audio" controls>
+                  <source src={data.audioPreviewUrl} type="audio/mpeg" />
+                  Your browser does not support the audio element.
+                </audio>
+              )}
             </div>
           </div>
         )}

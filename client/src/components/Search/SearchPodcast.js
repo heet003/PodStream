@@ -85,7 +85,7 @@ function SearchPodcast() {
             ))}
           </div>
         )}
-        {selectedCategory && podcasts && (
+        {selectedCategory && podcasts.length > 0 && (
           <div>
             <div> {renderPodcasts(selectedCategory, podcasts)}</div>
           </div>
