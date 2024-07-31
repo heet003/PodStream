@@ -28,15 +28,15 @@ podcast.getAll = async (req, res) => {
 
 podcast.getPodcast = async (req, res) => {
   const { id } = req.params;
-  const category = req.query.param1;
+  const { param1 } = req.query;
   var details;
 
   let promise = helper.paramValidate({ code: 2010, val: !id });
 
   promise
     .then(async () => {
-      if (category) {
-        return await db._find(category.toLowerCase(), { _id: id });
+      if (param1) {
+        return await db._find(param1.toLowerCase(), { _id: id });
       } else {
         return await db._find("podcasts", { _id: id });
       }
@@ -171,9 +171,44 @@ podcast.getCategory = async (req, res) => {
     });
 };
 
+podcast.searchPodcast = async (req, res) => {
+  const { userId } = req.uSession;
+  const { search } = req.params;
+  var results;
+  let promise = helper.paramValidate(
+    { code: 2010, val: !userId },
+    { code: 2010, val: !search }
+  );
+
+  promise
+    .then(async () => {
+      const searchRegex = new RegExp(search, "i");
+      return await db._find("podcasts", {
+        $or: [
+          { name: { $regex: searchRegex } },
+          { "podcast.name": { $regex: searchRegex } },
+        ],
+      });
+    })
+    .then(async (p) => {
+      results = p;
+      if (results.length < 0) {
+        return Promise.reject(403);
+      }
+    })
+    .then(() => {
+      helper.success(res, { results });
+    })
+    .catch((e) => {
+      helper.error(res, e);
+    });
+};
+
 module.exports = function (app, uri) {
   podRouter.get("/", podcast.getAll);
   podRouter.get("/:id", podcast.getPodcast);
+  podRouter.get("/search/:search", podcast.searchPodcast);
+  podRouter.get("/details/:id", podcast.getPodcast);
   podRouter.get("/like/:id", podcast.likePodcast);
   podRouter.get("/user/likes", podcast.userLikedPodcasts);
   podRouter.get("/user/favourites", podcast.userFavourites);

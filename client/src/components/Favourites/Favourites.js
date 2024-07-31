@@ -51,7 +51,7 @@ function Favourites() {
       </div>
     </div>
   );
-  
+
   return (
     <React.Fragment>
       {isLoading && <LoadingSpinner asOverlay />}
@@ -65,7 +65,13 @@ function Favourites() {
           />
         </div>
         <h3>Browse All</h3>
-        <div> {renderPodcasts("Favourites", fav)}</div>
+        {fav.length > 0 ? (
+          <div> {renderPodcasts("Favourites", fav)}</div>
+        ) : (
+          <div>
+            <p>No Favourites to show.</p>
+          </div>
+        )}
       </div>
     </React.Fragment>
   );

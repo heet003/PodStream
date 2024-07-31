@@ -18,13 +18,12 @@ function PodcastDetails(props) {
   const { id } = useParams();
   const searchParams = new URLSearchParams(location.search);
   const param1 = searchParams.get("param1");
-  console.log(param1);
 
   useEffect(() => {
     async function fetchData() {
       if (param1) {
         const resData = await sendRequest(
-          `http://localhost:5000/api/podcast/details/${id}?param1=${encodeURIComponent(
+          `http://localhost:5000/api/podcasts/details/${id}?param1=${encodeURIComponent(
             param1
           )}`,
           "GET",
@@ -37,7 +36,7 @@ function PodcastDetails(props) {
         setData(resData.details);
       } else {
         const resData = await sendRequest(
-          `http://localhost:5000/api/podcast/${id}`,
+          `http://localhost:5000/api/podcasts/${id}`,
           "GET",
           null,
           {

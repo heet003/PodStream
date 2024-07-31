@@ -14,28 +14,40 @@ function SearchPodcast() {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [podcasts, setPodcasts] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
-      const resData = await sendRequest(
-        `http://localhost:5000/api/podcasts/category/${selectedCategory}`,
-        "GET",
-        null,
-        {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        }
-      );
+      let url = `http://localhost:5000/api/podcasts`;
+      if (selectedCategory) {
+        url += `/category/${selectedCategory}`;
+      }
+      if (searchQuery) {
+        url += `/search/${searchQuery}`;
+      }
+
+      const resData = await sendRequest(url, "GET", null, {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      });
       setPodcasts(resData.results);
     };
-    if (token && selectedCategory) {
+    if (token) {
       fetchData();
     }
-  }, [selectedCategory, token, sendRequest]);
+  }, [selectedCategory, token, sendRequest, searchQuery]);
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
 
   const renderPodcasts = (genreName, podcasts) => (
     <div>
-      <h3>Podcasts in {selectedCategory}</h3>
+      <h3>
+        {selectedCategory
+          ? `Podcasts in ${selectedCategory}`
+          : `Showing Results for ${searchQuery}`}
+      </h3>
       <div className="podcasts">
         {podcasts.map((podcast) => (
           <PodcastCard
@@ -60,14 +72,19 @@ function SearchPodcast() {
       <ErrorModal error={error} onClear={clearError} />
       <div>
         <div className="search-container">
-          <input type="text" placeholder="Search Podcast" />
+          <input
+            type="text"
+            placeholder="Search Podcast"
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
           <FontAwesomeIcon
             className="FontAwesomeIcon"
             icon={faMagnifyingGlass}
           />
         </div>
         <h3>Browse All</h3>
-        {!selectedCategory && (
+        {!podcasts && (
           <div className="genres-box">
             {Category.map((element) => (
               <div
@@ -86,9 +103,11 @@ function SearchPodcast() {
             ))}
           </div>
         )}
-        {selectedCategory && podcasts.length > 0 && (
+        {podcasts ? (
+          <div> {renderPodcasts("Favourites", podcasts)}</div>
+        ) : (
           <div>
-            <div> {renderPodcasts(selectedCategory, podcasts)}</div>
+            <p>No Podcasts to show.</p>
           </div>
         )}
       </div>
