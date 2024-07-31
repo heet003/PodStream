@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./Auth.css";
-import { Input, Typography } from "antd";
-const { Title } = Typography;
+import { Input } from "antd";
 
 const Otp = ({ handleVerifyOtp, message, setOtpValue }) => {
   const [timeLeft, setTimeLeft] = useState(120);
@@ -33,16 +32,12 @@ const Otp = ({ handleVerifyOtp, message, setOtpValue }) => {
     <div className="otp-box">
       <h2 className="otp-h2">Enter OTP</h2>
       <form className="otp-form" onSubmit={handleVerifyOtp}>
-        <Title className="otp-title" level={3}>
-          OTP:
-        </Title>
         <Input.OTP mask="🔒" size="large" {...sharedProps} />
         <p className="otp-p">An OTP has been sent to your email.</p>
         <p className="otp-p">OTP will be valid for {formatTime(timeLeft)}</p>
         <button type="submit">Verify OTP</button>
       </form>
 
-      {/* {message && <p className="otp-message">{message}</p>} */}
     </div>
   );
 };

@@ -72,19 +72,21 @@ function PodcastCard(props) {
                   Release Date: {timeAgo(props.releaseDate)}
                 </p>
               )}
-              {props.share && (
-                <a
-                  className="share"
-                  href={`${props.share}`}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  <FontAwesomeIcon
-                    icon={faShareNodes}
-                    style={{ color: "#8c00ff" }}
-                  />
-                </a>
-              )}
+              <div>
+                {props.share && (
+                  <a
+                    className="share"
+                    href={`${props.share}`}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    <FontAwesomeIcon
+                      icon={faShareNodes}
+                      style={{ color: "#8c00ff" }}
+                    />
+                  </a>
+                )}
+              </div>
             </div>
           </div>
         </div>

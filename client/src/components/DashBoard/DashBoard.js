@@ -46,7 +46,7 @@ function DashBoard() {
             id={podcast._id}
             title={podcast.name}
             name={podcast.podcast.name}
-            htmlDescription={podcast.htmlDescription }
+            htmlDescription={podcast.htmlDescription}
             avatar={podcast.cover[2].url}
             image={podcast.cover[2].url}
             description={podcast.description}
@@ -65,9 +65,6 @@ function DashBoard() {
       <div>
         <div className="dashboard-genre">
           {renderPodcasts("History", history)}
-        </div>
-        <div className="dashboard-genre">
-          {renderPodcasts("True Crime", trueCrime)}
         </div>
         <div className="dashboard-genre">
           {renderPodcasts("True Crime", trueCrime)}

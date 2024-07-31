@@ -42,3 +42,63 @@
 .auth_form select option {
   color: #9e9e9e;
 }
+
+
+.otp-box {
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid white;
+  color: white;
+  max-width: 500px;
+  margin: 50px auto;
+  text-align: center;
+}
+
+.otp-h2 {
+  font-size: 30px;
+  margin-bottom: 20px;
+}
+
+.otp-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.otp-title {
+  color: white;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.otp-input {
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+}
+
+.otp-p {
+  font-size: 14px;
+  margin: 10px auto;
+}
+
+.otp-form button[type="submit"] {
+  background-color: #4caf50;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background-color 0.3s ease;
+}
+
+.otp-form button[type="submit"]:hover {
+  background-color: #e3e3e3;
+}
+
+.otp-message {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #e74c3c;
+}

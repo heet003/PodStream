@@ -55,7 +55,6 @@ const App = () => {
       <Routes>
         <Route path="/" element={<DashBoard />} />
         <Route path="/auth" element={<Auth />} />
-        <Route path="/search" element={<SearchPodcast />} />
         <Route path="/verify-otp" element={<Otp />} />
         <Route path="*" element={<Navigate to="/auth" replace />} />
       </Routes>

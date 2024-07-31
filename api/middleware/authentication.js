@@ -6,6 +6,7 @@ module.exports = function (app) {
     let noAuthURL = [
       prefix + "/",
       prefix + "/api/users/signup",
+      prefix + "/api/users/verify-otp",
       prefix + "/api/users/login",
       prefix + "/api/podcasts/",
     ];
