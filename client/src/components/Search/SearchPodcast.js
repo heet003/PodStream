@@ -41,6 +41,7 @@ function SearchPodcast() {
           <PodcastCard
             key={podcast.id}
             id={podcast._id}
+            category={selectedCategory}
             title={podcast.name}
             avatar={podcast.cover[2].url}
             image={podcast.cover[2].url}

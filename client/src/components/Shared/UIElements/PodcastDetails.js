@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/auth-hook";
 import ErrorModal from "./ErrorModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,23 +11,42 @@ import "./PodcastCard.css";
 
 function PodcastDetails(props) {
   const { token } = useAuth();
+  const location = useLocation();
   const [data, setData] = useState();
   const [isLiked, setIsLiked] = useState(false);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const { id } = useParams();
+  const searchParams = new URLSearchParams(location.search);
+  const param1 = searchParams.get("param1");
+  console.log(param1);
 
   useEffect(() => {
     async function fetchData() {
-      const resData = await sendRequest(
-        `http://localhost:5000/api/podcasts/${id}`,
-        "GET",
-        null,
-        {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        }
-      );
-      setData(resData.details);
+      if (param1) {
+        const resData = await sendRequest(
+          `http://localhost:5000/api/podcast/details/${id}?param1=${encodeURIComponent(
+            param1
+          )}`,
+          "GET",
+          null,
+          {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          }
+        );
+        setData(resData.details);
+      } else {
+        const resData = await sendRequest(
+          `http://localhost:5000/api/podcast/${id}`,
+          "GET",
+          null,
+          {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          }
+        );
+        setData(resData.details);
+      }
 
       const responseData = await sendRequest(
         `http://localhost:5000/api/podcasts/user/likes`,
@@ -46,7 +65,7 @@ function PodcastDetails(props) {
     if (token) {
       fetchData();
     }
-  }, [token, sendRequest, id]);
+  }, [token, sendRequest, id, param1]);
 
   const formatDuration = (ms) => {
     if (!ms) {

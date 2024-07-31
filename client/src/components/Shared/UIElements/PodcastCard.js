@@ -40,7 +40,15 @@ function PodcastCard(props) {
 
   return (
     <div className="podcast-card-container">
-      <Link to={props.id ? `/podcast/${props.id}` : "/"}>
+      <Link
+        to={
+          props.id && props.category
+            ? `/podcast/${props.id}?param1=${encodeURIComponent(
+                props.category
+              )}`
+            : `/podcast/${props.id}`
+        }
+      >
         <div className="card">
           {props.image && (
             <div className="cover-image">

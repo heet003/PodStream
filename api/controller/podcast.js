@@ -28,13 +28,18 @@ podcast.getAll = async (req, res) => {
 
 podcast.getPodcast = async (req, res) => {
   const { id } = req.params;
+  const category = req.query.param1;
   var details;
 
   let promise = helper.paramValidate({ code: 2010, val: !id });
 
   promise
     .then(async () => {
-      return await db._find("podcasts", { _id: id });
+      if (category) {
+        return await db._find(category.toLowerCase(), { _id: id });
+      } else {
+        return await db._find("podcasts", { _id: id });
+      }
     })
     .then((p) => {
       details = p[0];
