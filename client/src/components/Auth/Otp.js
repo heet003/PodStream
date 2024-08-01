@@ -37,7 +37,6 @@ const Otp = ({ handleVerifyOtp, message, setOtpValue }) => {
         <p className="otp-p">OTP will be valid for {formatTime(timeLeft)}</p>
         <button type="submit">Verify OTP</button>
       </form>
-
     </div>
   );
 };

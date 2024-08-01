@@ -17,7 +17,7 @@ const message = {
   },
   1003: {
     message:
-      "Your have reached to number of device which was allowed in your package. to add more please contact sds team",
+      "User Not Found",
     httpCode: 400,
   },
   1004: {

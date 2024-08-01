@@ -16,6 +16,12 @@
     font-size: 1rem;
 }
 
+.sub-navbar {
+    display: flex;
+    gap: 20px;
+}
+
+
 .login-button a {
     text-decoration: none;
     background-color: #fca3a3;
@@ -24,7 +30,6 @@
     padding: 10px 20px;
     cursor: pointer;
     border-radius: 5px;
-
     font-size: 1rem;
 }
 

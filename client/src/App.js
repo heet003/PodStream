@@ -17,6 +17,7 @@ import Content from "./components/Content/Content";
 import SearchPodcast from "./components/Search/SearchPodcast";
 import Favourites from "./components/Favourites/Favourites";
 import PodcastDetails from "./components/Shared/UIElements/PodcastDetails";
+import UserProfile from "./components/UserProfile/UserProfile";
 
 const App = () => {
   const { token, login, logout, role } = useAuth();
@@ -33,6 +34,7 @@ const App = () => {
       routes = (
         <Routes>
           <Route path="/" element={<DashBoard />} />
+          <Route path="/profile" element={<UserProfile />} />
           <Route path="/favourites" element={<Favourites />} />
           <Route path="/podcast/:id" element={<PodcastDetails />} />
           <Route path="/search" element={<SearchPodcast />} />
@@ -43,6 +45,7 @@ const App = () => {
       routes = (
         <Routes>
           <Route path="/" element={<DashBoard />} />
+          <Route path="/profile" element={<UserProfile />} />
           <Route path="/favourites" element={<Favourites />} />
           <Route path="/podcast/:id" element={<PodcastDetails />} />
           <Route path="/search" element={<SearchPodcast />} />

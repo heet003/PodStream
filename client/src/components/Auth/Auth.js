@@ -19,9 +19,6 @@ const Auth = () => {
   const [isLoginMode, setIsLoginMode] = useState(true);
 
   const [formState, setFormState] = useState({
-    role: {
-      value: "",
-    },
     name: {
       value: "",
     },
@@ -29,6 +26,15 @@ const Auth = () => {
       value: "",
     },
     password: {
+      value: "",
+    },
+    phone: {
+      value: "",
+    },
+    address: {
+      value: "",
+    },
+    bio: {
       value: "",
     },
   });
@@ -39,27 +45,27 @@ const Auth = () => {
 
   const handleVerifyOtp = async (event) => {
     event.preventDefault();
-    const responseData = await sendRequest(
-      "http://localhost:5000/api/users/verify-otp",
-      "POST",
-      JSON.stringify({
-        email: formState.email.value,
-        otp: otpValue,
-      }),
-      {
-        "Content-Type": "application/json",
-      }
-    );
-
-    auth.login(responseData.token, responseData.role);
-    setTimeout(() => {
-      navigate("/");
-    }, 3000);
+    try {
+      const responseData = await sendRequest(
+        "http://localhost:5000/api/users/verify-otp",
+        "POST",
+        JSON.stringify({
+          email: formState.email.value,
+          otp: otpValue,
+        }),
+        {
+          "Content-Type": "application/json",
+        }
+      );
+      message.success({ content: "Sign Up Successful!", duration: 2 });
+      auth.login(responseData.token, responseData.role);
+      setTimeout(() => {
+        navigate("/");
+      }, 3000);
+    } catch (err) {
+      console.error(err);
+    }
   };
-
-  // const openMessage = () => {
-  //   setTimeout(() => {}, 2000);
-  // };
 
   const inputHandler = (id, value, type = "text") => {
     setFormState((prevState) => ({
@@ -76,41 +82,47 @@ const Auth = () => {
   const authSubmitHandler = async (event) => {
     event.preventDefault();
     let responseData;
-    if (isLoginMode) {
-      responseData = await sendRequest(
-        "http://localhost:5000/api/users/login",
-        "POST",
-        JSON.stringify({
-          email: formState.email.value,
-          password: formState.password.value,
-        }),
-        {
-          "Content-Type": "application/json",
-        }
-      );
-    } else {
-      responseData = await sendRequest(
-        "http://localhost:5000/api/users/signup",
-        "POST",
-        JSON.stringify({
-          role: formState.role.value,
-          name: formState.name.value,
-          email: formState.email.value,
-          password: formState.password.value,
-        }),
-        {
-          "Content-Type": "application/json",
-        }
-      );
-    }
-    if (responseData.otp) {
-      setIsOtpSent(true);
-    } else {
-      message.success({ content: "Login Successfull!", duration: 2 });
-      auth.login(responseData.token, responseData.role);
-      setTimeout(() => {
-        navigate("/");
-      }, 3000);
+    try {
+      if (isLoginMode) {
+        responseData = await sendRequest(
+          "http://localhost:5000/api/users/login",
+          "POST",
+          JSON.stringify({
+            email: formState.email.value,
+            password: formState.password.value,
+          }),
+          {
+            "Content-Type": "application/json",
+          }
+        );
+      } else {
+        responseData = await sendRequest(
+          "http://localhost:5000/api/users/signup",
+          "POST",
+          JSON.stringify({
+            name: formState.name.value,
+            email: formState.email.value,
+            password: formState.password.value,
+            phone: formState.phone.value,
+            address: formState.address.value,
+            bio: formState.bio.value,
+          }),
+          {
+            "Content-Type": "application/json",
+          }
+        );
+      }
+      if (responseData.otp) {
+        setIsOtpSent(true);
+      } else {
+        message.success({ content: "Login Successful!", duration: 2 });
+        auth.login(responseData.token, responseData.role);
+        setTimeout(() => {
+          navigate("/");
+        }, 3000);
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -126,28 +138,41 @@ const Auth = () => {
         />
       ) : (
         <div className="authentication">
-          <h2 className="form_header">Login Required</h2>
+          <h2 className="form_header">{isLoginMode ? "Login" : "Signup"}</h2>
           <hr />
           <form className="auth_form" onSubmit={authSubmitHandler}>
             {!isLoginMode && (
               <React.Fragment>
-                <label htmlFor="type">Role:</label>
-                <select
-                  id="role"
-                  value={formState.role.value}
-                  onChange={(e) => inputHandler("role", e.target.value)}
-                >
-                  <option value="">Select</option>
-                  <option value="user">User</option>
-                  <option value="creator">Creator</option>
-                </select>
                 <label htmlFor="name">Name:</label>
                 <input
                   id="name"
                   type="text"
-                  placeholder="Your Name"
+                  placeholder="John Doe"
                   onChange={(e) => inputHandler("name", e.target.value)}
                   value={formState.name.value}
+                />
+                <label htmlFor="phone">Phone:</label>
+                <input
+                  id="phone"
+                  type="tel"
+                  placeholder="12354567890"
+                  onChange={(e) => inputHandler("phone", e.target.value)}
+                  value={formState.phone.value}
+                />
+                <label htmlFor="address">Address:</label>
+                <input
+                  id="address"
+                  type="text"
+                  placeholder="123 Bleeker Street, New York"
+                  onChange={(e) => inputHandler("address", e.target.value)}
+                  value={formState.address.value}
+                />
+                <label htmlFor="bio">Bio (Optional):</label>
+                <textarea
+                  id="bio"
+                  placeholder="Your hobbies, interests, goals."
+                  onChange={(e) => inputHandler("bio", e.target.value)}
+                  value={formState.bio.value}
                 />
               </React.Fragment>
             )}
@@ -155,7 +180,7 @@ const Auth = () => {
             <input
               id="email"
               type="email"
-              placeholder="E-Mail"
+              placeholder="abc@gmail.com"
               onChange={(e) => inputHandler("email", e.target.value)}
               value={formState.email.value}
             />
@@ -163,7 +188,7 @@ const Auth = () => {
             <input
               id="password"
               type="password"
-              placeholder="Password"
+              placeholder="123456"
               onChange={(e) => inputHandler("password", e.target.value)}
               value={formState.password.value}
             />

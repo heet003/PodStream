@@ -28,7 +28,8 @@
 }
 
 .auth_form input,
-.auth_form select {
+.auth_form select,
+.auth_form textarea {
   background-color: #1e2330;
   color: white;
   border: none;

@@ -71,18 +71,20 @@ function SearchPodcast() {
       {isLoading && <LoadingSpinner asOverlay />}
       <ErrorModal error={error} onClear={clearError} />
       <div>
-        <div className="search-container">
-          <input
-            type="text"
-            placeholder="Search Podcast"
-            value={searchQuery}
-            onChange={handleSearchChange}
-          />
-          <FontAwesomeIcon
-            className="FontAwesomeIcon"
-            icon={faMagnifyingGlass}
-          />
-        </div>
+        {!selectedCategory && (
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder="Search Podcast"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+            <FontAwesomeIcon
+              className="FontAwesomeIcon"
+              icon={faMagnifyingGlass}
+            />
+          </div>
+        )}
         <h3>Browse All</h3>
         {!podcasts && (
           <div className="genres-box">

@@ -55,21 +55,24 @@ user.verifyOTP = (req, res) => {
         if (currentTime < otpDocument.expiresAt) {
           uid = userFound._id;
           let token = {
-            userId: uid,
+            userId: userFound._id,
+            role: userFound.role,
             ttl: helper.token.TTL(),
             created: helper.dbDate(),
           };
           return db.insert(ACCESSTOKEN, token);
         }
       }
+      await db.delete("otps", { email });
       await db.delete("users", { email });
       return Promise.reject(1003);
     })
     .then((tokenId) => {
       if (tokenId) {
         let tokenInfo = {
-          userId: userFound.userId,
-          tokenId: tokenId,
+          role: userFound.role,
+          userId: userFound._id,
+          tokenId,
         };
         token = helper.token.get(tokenInfo);
         return token;
@@ -85,15 +88,13 @@ user.verifyOTP = (req, res) => {
       });
     })
     .catch(async (e) => {
-      await db.delete("otps", { email });
-      await db.delete("users", { email });
       helper.error(res, e);
     });
 };
 
 user.signup = (req, res) => {
-  const { role, name, email, password } = req.body;
-
+  const { name, email, phone, address, bio, password } = req.body;
+  var role = "user";
   var userFound;
   var uid;
 
@@ -182,6 +183,9 @@ user.signup = (req, res) => {
           role,
           name,
           email,
+          phone,
+          address,
+          bio,
           password: hash,
           searchHistory: [],
           watchHistory: [],
@@ -225,7 +229,7 @@ user.signup = (req, res) => {
     });
 };
 
-user.login = async (req, res) => {
+user.login = (req, res) => {
   const { email, password } = req.body;
 
   var existingUser;
@@ -281,10 +285,110 @@ user.login = async (req, res) => {
     });
 };
 
+user.userProfile = (req, res) => {
+  const { userId } = req.uSession;
+
+  let promise = helper.paramValidate({ code: 2010, val: !userId });
+
+  promise
+    .then(async () => {
+      return await db._findOne("users", { _id: userId });
+    })
+    .then((u) => {
+      if (u.length > 0) {
+        return u[0];
+      }
+      return Promise.reject(1003);
+    })
+    .then((user) => {
+      helper.success(res, { user });
+    })
+    .catch((err) => {
+      helper.error(res, err);
+    });
+};
+
+user.updateProfile = (req, res) => {
+  const { userId } = req.uSession;
+  const { role, address, phone, name, bio } = req.body;
+
+  let promise = helper.paramValidate({ code: 2010, val: !userId });
+
+  promise
+    .then(async () => {
+      return await db._findOne("users", { _id: userId });
+    })
+    .then((u) => {
+      if (u.length > 0) {
+        return u[0];
+      }
+      return Promise.reject(1003);
+    })
+    .then(async (user) => {
+      return await db.update(
+        "users",
+        { _id: userId },
+        {
+          role,
+          name,
+          address,
+          bio,
+          phone,
+        }
+      );
+    })
+    .then((user) => {
+      helper.success(res, { user });
+    })
+    .catch((error) => {
+      helper.error(res, error);
+    });
+};
+
+user.imageUpload = (req, res) => {
+  const { userId } = req.uSession;
+  const { image } = req.body;
+
+  let promise = helper.paramValidate(
+    { code: 2010, val: !userId },
+    { code: 2010, val: !image }
+  );
+
+  let userFound;
+  promise
+    .then(async () => {
+      return await db._findOne("users", { _id: userId });
+    })
+    .then((u) => {
+      if (u.length > 0) {
+        return u[0];
+      }
+      return Promise.reject(1003);
+    })
+    .then(async (user) => {
+      if (user) {
+        userFound = user;
+        return await db.update("users", { _id: userId }, { imageUrl: image });
+      }
+      return Promise.reject(1003);
+    })
+    .then((user) => {
+      if (user) {
+        helper.success(res, { userFound });
+      }
+    })
+    .catch((error) => {
+      helper.error(res, error);
+    });
+};
+
 module.exports = function (app, uri) {
   userRouter.post("/login", user.login);
   userRouter.post("/signup", user.signup);
   userRouter.post("/verify-otp", user.verifyOTP);
+  userRouter.get("/profile", user.userProfile);
+  userRouter.post("/profile", user.updateProfile);
+  userRouter.post("/imageUpload", user.imageUpload);
 
   app.use(uri, userRouter);
 };
