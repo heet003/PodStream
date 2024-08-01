@@ -100,6 +100,7 @@ function UserProfile() {
   };
 
   const handleSave = async () => {
+    formData.image = imageFile;
     await sendRequest(
       "http://localhost:5000/api/users/profile",
       "POST",
@@ -109,29 +110,9 @@ function UserProfile() {
         Authorization: `Bearer ${token}`,
       }
     );
-    setUser(formData);
     message.success({ content: "Profile Updated!", duration: 2 });
+    setUser(formData);
     setEditMode(false);
-  };
-
-  const uploadImage = async () => {
-    console.log(imageFile);
-    if (!imageFile) return;
-    formData.image = imageFile;
-    const resData = await sendRequest(
-      "http://localhost:5000/api/users/imageUpload",
-      "POST",
-      JSON.stringify(formData),
-      {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      }
-    );
-    setFormData((prevState) => ({
-      ...prevState,
-      image: resData.imageUrl,
-    }));
-    message.success({ content: "Image Uploaded!", duration: 2 });
   };
 
   return (
@@ -161,12 +142,10 @@ function UserProfile() {
                 <React.Fragment>
                   <ImageUpload
                     id="image"
+                    btnText={formData.image ? "Update Image" : "Add Image"}
                     userImage={formData.image}
                     onInput={handleImageInput}
                   />
-                  <Button type="primary" size="large" onClick={uploadImage}>
-                    {formData.image ? "Upload Image" : "Add Image"}
-                  </Button>
                 </React.Fragment>
               )}
               <div className="mt-3">

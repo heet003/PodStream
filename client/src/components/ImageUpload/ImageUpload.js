@@ -1,7 +1,33 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useContext } from "react";
 import "./ImageUpload.css";
+import { Button, ConfigProvider, Space } from "antd";
+import { css } from "@emotion/css";
 
 const ImageUpload = (props) => {
+  const { getPrefixCls } = useContext(ConfigProvider.ConfigContext);
+  const rootPrefixCls = getPrefixCls();
+  const linearGradientButton = css`
+    &.${rootPrefixCls}-btn-primary:not([disabled]):not(
+        .${rootPrefixCls}-btn-dangerous
+      ) {
+      border-width: 0;
+      > span {
+        position: relative;
+      }
+      &::before {
+        content: "";
+        background: linear-gradient(135deg, #6253e1, #04befe);
+        position: absolute;
+        inset: 0;
+        opacity: 1;
+        transition: all 0.3s;
+        border-radius: inherit;
+      }
+      &:hover::before {
+        opacity: 0;
+      }
+    }
+  `;
   const [file, setFile] = useState();
   const [previewUrl, setPreviewUrl] = useState("");
   const [isValid, setIsValid] = useState(false);
@@ -38,31 +64,39 @@ const ImageUpload = (props) => {
 
   return (
     <div className="form-control">
-      <input
-        id={props.id}
-        ref={filePickerRef}
-        style={{ display: "none" }}
-        type="file"
-        accept=".jpg,.png,.jpeg"
-        onChange={pickedHandler}
-      />
-      <div className={`image-upload ${props.center && "center"}`}>
-        <div className="image-upload__preview">
-          <img
-            src={
-              previewUrl
-                ? previewUrl
-                : props.userImage
-                ? props.userImage
-                : `https://bootdey.com/img/Content/avatar/avatar7.png`
-            }
-            alt="Preview"
-          />
+      <ConfigProvider
+        button={{
+          className: linearGradientButton,
+        }}
+      >
+        <input
+          id={props.id}
+          ref={filePickerRef}
+          style={{ display: "none" }}
+          type="file"
+          accept=".jpg,.png,.jpeg"
+          onChange={pickedHandler}
+        />
+        <div className={`image-upload ${props.center && "center"}`}>
+          <div className="image-upload__preview">
+            <img
+              src={
+                previewUrl
+                  ? previewUrl
+                  : props.userImage
+                  ? props.userImage
+                  : `https://bootdey.com/img/Content/avatar/avatar7.png`
+              }
+              alt="Preview"
+            />
+          </div>
+          <Space>
+            <Button type="primary" size="large" onClick={pickImageHandler}>
+              {props.btnText}
+            </Button>
+          </Space>
         </div>
-        <button type="button" onClick={pickImageHandler}>
-          Pick Image
-        </button>
-      </div>
+      </ConfigProvider>
     </div>
   );
 };

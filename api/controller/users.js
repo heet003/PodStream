@@ -310,7 +310,7 @@ user.userProfile = (req, res) => {
 
 user.updateProfile = (req, res) => {
   const { userId } = req.uSession;
-  const { role, address, phone, name, bio } = req.body;
+  const { role, address, phone, name, bio, image } = req.body;
 
   let promise = helper.paramValidate({ code: 2010, val: !userId });
 
@@ -334,6 +334,7 @@ user.updateProfile = (req, res) => {
           address,
           bio,
           phone,
+          imageUrl: image,
         }
       );
     })
@@ -354,10 +355,14 @@ user.imageUpload = (req, res) => {
     { code: 2010, val: !image }
   );
 
-  let userFound;
   promise
     .then(async () => {
-      return await db._findOne("users", { _id: userId });
+      return await db.update("users", { _id: userId }, { imageUrl: image });
+    })
+    .then(async (u) => {
+      if (u) {
+        return await db._findOne("users", { _id: userId });
+      }
     })
     .then((u) => {
       if (u.length > 0) {
@@ -365,17 +370,8 @@ user.imageUpload = (req, res) => {
       }
       return Promise.reject(1003);
     })
-    .then(async (user) => {
-      if (user) {
-        userFound = user;
-        return await db.update("users", { _id: userId }, { imageUrl: image });
-      }
-      return Promise.reject(1003);
-    })
     .then((user) => {
-      if (user) {
-        helper.success(res, { userFound });
-      }
+      helper.success(res, { user });
     })
     .catch((error) => {
       helper.error(res, error);
