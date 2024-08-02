@@ -325,50 +325,18 @@ user.updateProfile = (req, res) => {
       return Promise.reject(1003);
     })
     .then(async (user) => {
-      return await db.update(
-        "users",
-        { _id: userId },
-        {
-          role,
-          name,
-          address,
-          bio,
-          phone,
-          imageUrl: image,
-        }
-      );
-    })
-    .then((user) => {
-      helper.success(res, { user });
-    })
-    .catch((error) => {
-      helper.error(res, error);
-    });
-};
-
-user.imageUpload = (req, res) => {
-  const { userId } = req.uSession;
-  const { image } = req.body;
-
-  let promise = helper.paramValidate(
-    { code: 2010, val: !userId },
-    { code: 2010, val: !image }
-  );
-
-  promise
-    .then(async () => {
-      return await db.update("users", { _id: userId }, { imageUrl: image });
-    })
-    .then(async (u) => {
-      if (u) {
-        return await db._findOne("users", { _id: userId });
+      const updatedData = {
+        role,
+        name,
+        address,
+        bio,
+        phone,
+      };
+      if (image) {
+        updatedData.imageUrl = image;
       }
-    })
-    .then((u) => {
-      if (u.length > 0) {
-        return u[0];
-      }
-      return Promise.reject(1003);
+
+      return await db.update("users", { _id: userId }, updatedData);
     })
     .then((user) => {
       helper.success(res, { user });
@@ -384,7 +352,6 @@ module.exports = function (app, uri) {
   userRouter.post("/verify-otp", user.verifyOTP);
   userRouter.get("/profile", user.userProfile);
   userRouter.post("/profile", user.updateProfile);
-  userRouter.post("/imageUpload", user.imageUpload);
 
   app.use(uri, userRouter);
 };

@@ -14,7 +14,7 @@ import "./SideBar.css";
 
 function SideBar({ isOpen, onClose }) {
   const { token, logout, role } = useAuth();
-
+  console.log(role);
   return (
     <React.Fragment>
       <div className={`sidebar ${isOpen ? "open" : "closed"}`}>
@@ -50,7 +50,7 @@ function SideBar({ isOpen, onClose }) {
               </Link>
             </li>
             <hr />
-            {token && role !== "user" && (
+            {token && role === "creator" && (
               <li>
                 <Link to={`/upload`} className="w3-button">
                   <FontAwesomeIcon

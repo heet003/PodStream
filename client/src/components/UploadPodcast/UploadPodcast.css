@@ -1,0 +1,55 @@
+.upload-podcast {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #15171E;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    color: #fff;
+}
+
+.upload-podcast h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    color: #fff;
+}
+
+.upload-podcast .ant-form-item {
+    margin-bottom: 16px;
+}
+
+.upload-podcast .ant-form-item-label>label {
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+.upload-podcast .ant-input,
+.upload-podcast .ant-input-number,
+.upload-podcast .ant-textarea,
+.upload-podcast .ant-radio-wrapper {
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.upload-podcast .ant-input::placeholder,
+.upload-podcast .ant-input-number::placeholder,
+.upload-podcast .ant-textarea::placeholder {
+    color: #030303;
+}
+
+.upload-podcast .ant-btn {
+    width: 100%;
+    border: none;
+    background-color: #d75454;
+    color: #000000;
+}
+
+.upload-podcast .ant-btn:hover,
+.upload-podcast .ant-btn:focus {
+    background-color: #fff;
+    border-color: #fff;
+    color: #15171E;
+}

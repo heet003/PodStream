@@ -13,7 +13,6 @@ const Auth = () => {
   const navigate = useNavigate();
   const [otpValue, setOtpValue] = useState("");
   const [isOtpSent, setIsOtpSent] = useState(false);
-
   const auth = useContext(AuthContext);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [isLoginMode, setIsLoginMode] = useState(true);

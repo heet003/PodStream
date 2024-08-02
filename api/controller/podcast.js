@@ -5,6 +5,17 @@ var helper = require("../core/helper");
 const ACCESSTOKEN = "AccessToken";
 let podcast = {};
 
+function formatDuration(ms) {
+  const totalSeconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  // Pad seconds with leading zero if it's less than 10
+  const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
+
+  return `${minutes}:${formattedSeconds}`;
+}
+
 podcast.getAll = async (req, res) => {
   var podcasts;
 
@@ -13,6 +24,94 @@ podcast.getAll = async (req, res) => {
   promise
     .then(async () => {
       return await db._find("podcasts", {});
+    })
+    .then((p) => {
+      podcasts = p;
+      if (!podcasts) {
+        return Promise.reject(403);
+      }
+    })
+    .then(() => helper.success(res, { podcasts }))
+    .catch((e) => {
+      helper.error(res, e);
+    });
+};
+
+podcast.podcastUpload = async (req, res) => {
+  const { userId } = req.uSession;
+  const {
+    name,
+    publisher,
+    description,
+    durationText,
+    isExplicit,
+    audio,
+    cover,
+  } = req.body;
+  var podcasts;
+
+  let promise = helper.paramValidate(
+    { code: 2010, val: !userId },
+    { code: 2010, val: !name },
+    { code: 2010, val: !publisher },
+    { code: 2010, val: !description },
+    { code: 2010, val: !durationText },
+    { code: 2010, val: !isExplicit }
+  );
+
+  const podcastObject = {
+    type: "episode",
+    userId,
+    name,
+    shareUrl: ``,
+    explicit: isExplicit,
+    date: new Date().toISOString(),
+    description,
+    htmlDescription: `<p>${description}</p>`,
+    durationText: formatDuration(durationText),
+    audioPreviewUrl: audio,
+    cover: [
+      {
+        url: cover,
+        width: 640,
+        height: 640,
+      },
+      {
+        url: cover,
+        width: 640,
+        height: 640,
+      },
+      {
+        url: cover,
+        width: 640,
+        height: 640,
+      },
+    ],
+    podcast: {
+      shareUrl: "",
+      cover: [
+        {
+          url: cover,
+          width: 640,
+          height: 640,
+        },
+        {
+          url: cover,
+          width: 640,
+          height: 640,
+        },
+        {
+          url: cover,
+          width: 640,
+          height: 640,
+        },
+      ],
+    },
+  };
+
+  promise
+    .then(async () => {
+      return await db.insert("podcasts", podcastObject);
     })
     .then((p) => {
       podcasts = p;
@@ -206,6 +305,7 @@ podcast.searchPodcast = async (req, res) => {
 
 module.exports = function (app, uri) {
   podRouter.get("/", podcast.getAll);
+  podRouter.post("/upload", podcast.podcastUpload);
   podRouter.get("/:id", podcast.getPodcast);
   podRouter.get("/search/:search", podcast.searchPodcast);
   podRouter.get("/details/:id", podcast.getPodcast);

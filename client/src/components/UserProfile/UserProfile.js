@@ -6,6 +6,7 @@ import LoadingSpinner from "../Shared/UIElements/LoadingSpinner";
 import { useHttpClient } from "../hooks/http-hook";
 import { Button, ConfigProvider, Space } from "antd";
 import { css } from "@emotion/css";
+// import { AuthContext } from "../context/auth-context";
 import { message } from "antd";
 import ImageUpload from "../ImageUpload/ImageUpload";
 
@@ -34,10 +35,10 @@ function UserProfile() {
       }
     }
   `;
-
   const { token, role } = useAuth();
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [user, setUser] = useState(null);
+  // const auth = useContext(AuthContext);
   const [editMode, setEditMode] = useState(false);
   const [imageFile, setImageFile] = useState(null);
 
@@ -110,6 +111,13 @@ function UserProfile() {
         Authorization: `Bearer ${token}`,
       }
     );
+    const localData = localStorage.getItem("userData");
+    const localUser = localData ? JSON.parse(localData) : {};
+    const updatedUser = {
+      ...localUser,
+      role: formData.role,
+    };
+    localStorage.setItem("userData", JSON.stringify(updatedUser));
     message.success({ content: "Profile Updated!", duration: 2 });
     setUser(formData);
     setEditMode(false);

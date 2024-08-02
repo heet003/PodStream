@@ -150,7 +150,9 @@ function PodcastDetails(props) {
                     {formatDuration(data.durationMs)}
                   </p>
                 )}
-                {data.explicit && <p className="pod-exp">18+ Content</p>}
+                {data.explicit === "true" && (
+                  <p className="pod-exp">18+ Content</p>
+                )}
               </div>
               {data.description && (
                 <div className="desc-box">
