@@ -66,3 +66,33 @@
     height: auto;
     opacity: 1;
 }
+
+.edit-icon,
+.delete-icon {
+    padding: 0.5rem 1rem;
+    margin: 0.5rem;
+    background-color: #f0f0f0;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 5px;
+    gap: 5px;
+    font-size: 14px;
+    color: #ffffff;
+}
+
+.edit-icon {
+    background-color: #4caf50;
+}
+
+.delete-icon {
+    background-color: #f44336;
+}
+
+.edit-icon:hover {
+    background-color: #00ff08;
+}
+
+.delete-icon:hover {
+    background-color: #ff0000;
+}

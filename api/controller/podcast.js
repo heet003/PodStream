@@ -306,10 +306,7 @@ podcast.searchPodcast = async (req, res) => {
   const { userId } = req.uSession;
   const { search } = req.params;
   var results;
-  let promise = helper.paramValidate(
-    { code: 2010, val: !userId },
-    { code: 2010, val: !search }
-  );
+  let promise = helper.paramValidate({ code: 2010, val: !userId });
 
   promise
     .then(async () => {
@@ -335,10 +332,44 @@ podcast.searchPodcast = async (req, res) => {
     });
 };
 
+podcast.deletePodcasts = async (req, res) => {
+  const { userId } = req.uSession;
+  const { id } = req.params;
+  var results;
+  let promise = helper.paramValidate(
+    { code: 2010, val: !userId },
+    { code: 2010, val: !id }
+  );
+
+  promise
+    .then(async () => {
+      return await db._findOne("podcasts", { _id: id });
+    })
+    .then(async (p) => {
+      results = p[0];
+      if (!results) {
+        return Promise.reject(403);
+      }
+    })
+    .then(async () => {
+      return await db.delete("podcasts", { _id: id });
+    })
+    .then(async () => {
+      results = await db._find("podcasts", { userId });
+    })
+    .then(() => {
+      helper.success(res, { results });
+    })
+    .catch((e) => {
+      helper.error(res, e);
+    });
+};
+
 module.exports = function (app, uri) {
   podRouter.get("/", podcast.getAll);
   podRouter.post("/upload", podcast.podcastUpload);
   podRouter.get("/user-podcasts", podcast.userPodcasts);
+  podRouter.get("/delete/:id", podcast.deletePodcasts);
   podRouter.get("/:id", podcast.getPodcast);
   podRouter.get("/search/:search", podcast.searchPodcast);
   podRouter.get("/details/:id", podcast.getPodcast);
