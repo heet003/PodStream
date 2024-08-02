@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Radio, Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import "./UploadPodcast.css"; // Ensure this file exists and is styled
+import "./UploadPodcast.css"; 
 import { useAuth } from "../hooks/auth-hook";
 import { storage } from "./firebase";
 import { useHttpClient } from "../hooks/http-hook";
@@ -36,31 +36,27 @@ const UploadPodcast = ({ podcast, onEditSuccess }) => {
     formData.append("durationText", values.duration);
     setIsUploading(true);
 
-    if (podcast) {
-      // Upload audio file
-      if (values.audio && values.audio.originFileObj) {
-        const audioFile = values.audio.originFileObj;
-        const audioRef = ref(storage, `podcasts/${audioFile.name}`);
-        try {
-          await uploadBytes(audioRef, audioFile);
-          const audioUrl = await getDownloadURL(audioRef);
-          formData.append("audio", audioUrl);
-        } catch (error) {
-          console.error("Error uploading audio file:", error);
-        }
+    if (values.audio && values.audio.originFileObj) {
+      const audioFile = values.audio.originFileObj;
+      const audioRef = ref(storage, `podcasts/${audioFile.name}`);
+      try {
+        await uploadBytes(audioRef, audioFile);
+        const audioUrl = await getDownloadURL(audioRef);
+        formData.append("audio", audioUrl);
+      } catch (error) {
+        console.error("Error uploading audio file:", error);
       }
+    }
 
-      // Upload cover image
-      if (values.cover && values.cover.originFileObj) {
-        const coverFile = values.cover.originFileObj;
-        const coverRef = ref(storage, `covers/${values.cover.name}`);
-        try {
-          await uploadBytes(coverRef, coverFile);
-          const coverUrl = await getDownloadURL(coverRef);
-          formData.append("cover", coverUrl);
-        } catch (error) {
-          console.error("Error uploading cover image:", error);
-        }
+    if (values.cover && values.cover.originFileObj) {
+      const coverFile = values.cover.originFileObj;
+      const coverRef = ref(storage, `covers/${values.cover.name}`);
+      try {
+        await uploadBytes(coverRef, coverFile);
+        const coverUrl = await getDownloadURL(coverRef);
+        formData.append("cover", coverUrl);
+      } catch (error) {
+        console.error("Error uploading cover image:", error);
       }
     }
 
@@ -69,9 +65,7 @@ const UploadPodcast = ({ podcast, onEditSuccess }) => {
         ? `http://localhost:5000/api/podcasts/edit/${podcast._id}`
         : "http://localhost:5000/api/podcasts/upload";
       const method = "POST";
-      console.log(formData);
       await sendRequest(url, method, formData, {
-        // "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       });
       message.success(
