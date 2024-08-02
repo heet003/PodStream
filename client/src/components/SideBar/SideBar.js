@@ -7,6 +7,7 @@ import {
   faArrowRightToBracket,
   faHeart,
   faCloudArrowUp,
+  faPhotoFilm,
   faMagnifyingGlass,
   faHouse,
 } from "@fortawesome/free-solid-svg-icons";
@@ -14,7 +15,6 @@ import "./SideBar.css";
 
 function SideBar({ isOpen, onClose }) {
   const { token, logout, role } = useAuth();
-  console.log(role);
   return (
     <React.Fragment>
       <div className={`sidebar ${isOpen ? "open" : "closed"}`}>
@@ -58,6 +58,18 @@ function SideBar({ isOpen, onClose }) {
                     icon={faCloudArrowUp}
                   />
                   Upload
+                </Link>
+              </li>
+            )}
+            {token && role === "creator" && (
+              <li>
+                <Link to={`/pod-library`} className="w3-button">
+                  <FontAwesomeIcon
+                    className="FontAwesomeIcon"
+                    icon={faPhotoFilm}
+                    style={{ color: "#ffffff" }}
+                  />
+                  My Podcasts
                 </Link>
               </li>
             )}

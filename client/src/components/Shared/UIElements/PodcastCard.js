@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 
 function PodcastCard(props) {
   const [showFullDescription] = useState(false);
+
   function timeAgo(dateString) {
     if (!dateString) return null;
     const date = new Date(dateString);
@@ -15,9 +16,6 @@ function PodcastCard(props) {
 
   const renderDescription = (data) => {
     if (!data) return null;
-    if (!data) {
-      return "Description not available";
-    }
 
     const description = data;
     const words = description.split(" ");
@@ -40,65 +38,63 @@ function PodcastCard(props) {
 
   return (
     <div className="podcast-card-container">
-      <Link
-        to={
-          props.id && props.category
-            ? `/podcast/${props.id}?param1=${encodeURIComponent(
-                props.category
-              )}`
-            : `/podcast/${props.id}`
-        }
-      >
-        <div className="card">
-          {props.image && (
-            <div className="cover-image">
+      <div className="card">
+        {props.image && (
+          <div className="cover-image">
+            <Link
+              to={
+                props.id && props.category
+                  ? `/podcast/${props.id}?param1=${encodeURIComponent(
+                      props.category
+                    )}`
+                  : `/podcast/${props.id}`
+              }
+            >
               <img alt="podcast thumbnail" src={props.image} />
               <FontAwesomeIcon
                 className="play-button"
                 icon={faPlay}
                 style={{ color: "#8c00ff" }}
               />
-            </div>
-          )}
-          <div className="card-content">
-            <div className="text-content">
-              {props.title && <h3 className="title">{props.title}</h3>}
-              {renderDescription(props.description)}
-            </div>
+            </Link>
           </div>
-          <div className="card-footer">
-            {props.avatar && (
-              <img
-                className="avatar"
-                src={`${props.avatar}`}
-                alt="user profile"
-              />
+        )}
+        <div className="card-content">
+          <div className="text-content">
+            {props.title && <h3 className="title">{props.title}</h3>}
+            {renderDescription(props.description)}
+          </div>
+        </div>
+        <div className="card-footer">
+          {props.avatar && (
+            <img
+              className="avatar"
+              src={`${props.avatar}`}
+              alt="user profile"
+            />
+          )}
+          <div>
+            {props.releaseDate && (
+              <p className="date">Release Date: {timeAgo(props.releaseDate)}</p>
             )}
             <div>
-              {props.releaseDate && (
-                <p className="date">
-                  Release Date: {timeAgo(props.releaseDate)}
-                </p>
+              {props.share && (
+                <a
+                  className="share"
+                  href={`${props.share}`}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  <FontAwesomeIcon
+                    icon={faShareNodes}
+                    style={{ color: "#8c00ff" }}
+                  />
+                </a>
               )}
-              <div>
-                {props.share && (
-                  <a
-                    className="share"
-                    href={`${props.share}`}
-                    rel="noreferrer"
-                    target="_blank"
-                  >
-                    <FontAwesomeIcon
-                      icon={faShareNodes}
-                      style={{ color: "#8c00ff" }}
-                    />
-                  </a>
-                )}
-              </div>
             </div>
           </div>
         </div>
-      </Link>
+      </div>
     </div>
   );
 }

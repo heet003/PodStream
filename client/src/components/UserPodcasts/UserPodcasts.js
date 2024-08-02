@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import "./Favourites.css";
 import { useAuth } from "../hooks/auth-hook";
 import ErrorModal from "../Shared/UIElements/ErrorModal";
 import LoadingSpinner from "../Shared/UIElements/LoadingSpinner";
 import { useHttpClient } from "../hooks/http-hook";
 import PodcastCard from "../Shared/UIElements/PodcastCard";
 
-function Favourites() {
+function UserPodcasts() {
   const { token } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
-
   const [fav, SetFav] = useState([]);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
@@ -19,7 +17,7 @@ function Favourites() {
     const fetchData = async () => {
       const queryParams = searchQuery ? `?search=${searchQuery}` : "";
       const resData = await sendRequest(
-        `http://localhost:5000/api/podcasts/user/favourites${queryParams}`,
+        `http://localhost:5000/api/podcasts/user-podcasts${queryParams}`,
         "GET",
         null,
         {
@@ -46,7 +44,7 @@ function Favourites() {
       <div className="podcasts">
         {podcasts.map((podcast) => (
           <PodcastCard
-            key={podcast._id}
+            key={podcast.id}
             id={podcast._id}
             title={podcast.name}
             avatar={podcast.cover[2].url}
@@ -68,7 +66,7 @@ function Favourites() {
         <div className="fav-container">
           <input
             type="text"
-            placeholder="Favourite Podcast"
+            placeholder="Search Your Podcasts"
             value={searchQuery}
             onChange={handleSearchChange}
           />
@@ -79,10 +77,10 @@ function Favourites() {
         </div>
         <h3>Browse All</h3>
         {fav.length > 0 ? (
-          <div> {renderPodcasts("Favourites", fav)}</div>
+          <div> {renderPodcasts("Uploded", fav)}</div>
         ) : (
           <div>
-            <p>No Favourites to show.</p>
+            <p>No Podcasts Uploaded.</p>
           </div>
         )}
       </div>
@@ -90,4 +88,4 @@ function Favourites() {
   );
 }
 
-export default Favourites;
+export default UserPodcasts;
