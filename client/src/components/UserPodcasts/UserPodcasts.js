@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import "../Favourites/Favourites.css";
 import {
   faMagnifyingGlass,
   faEdit,
@@ -11,11 +10,14 @@ import ErrorModal from "../Shared/UIElements/ErrorModal";
 import LoadingSpinner from "../Shared/UIElements/LoadingSpinner";
 import { useHttpClient } from "../hooks/http-hook";
 import PodcastCard from "../Shared/UIElements/PodcastCard";
+import UploadPodcast from "../UploadPodcast/UploadPodcast";
+import "../Favourites/Favourites.css";
 
 function UserPodcasts() {
   const { token } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [fav, SetFav] = useState([]);
+  const [editingPodcast, setEditingPodcast] = useState(null);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
   useEffect(() => {
@@ -43,14 +45,13 @@ function UserPodcasts() {
     setSearchQuery(event.target.value);
   };
 
-  const handleEdit = async (podcastId) => {
-    // Logic to handle edit action
-    // You can redirect to an edit page or open a modal with the podcast details for editing
+  const handleEdit = (podcast) => {
+    setEditingPodcast(podcast);
   };
 
   const handleDelete = async (podcastId) => {
     try {
-      const resData = await sendRequest(
+      await sendRequest(
         `http://localhost:5000/api/podcasts/delete/${podcastId}`,
         "GET",
         null,
@@ -59,10 +60,16 @@ function UserPodcasts() {
           Authorization: `Bearer ${token}`,
         }
       );
-      SetFav(resData.results);
+      SetFav((prevFav) =>
+        prevFav.filter((podcast) => podcast._id !== podcastId)
+      );
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const handleEditSuccess = () => {
+    setEditingPodcast(null);
   };
 
   const renderPodcasts = (genreName, podcasts) => (
@@ -82,18 +89,14 @@ function UserPodcasts() {
               releaseDate={podcast.date}
             />
             <div className="podcast-actions">
-              <button
-                className="edit-icon"
-                onClick={() => handleEdit(podcast._id)}
-              >
+              <button className="edit-icon" onClick={() => handleEdit(podcast)}>
                 <FontAwesomeIcon icon={faEdit} /> Edit
               </button>
               <button
                 className="delete-icon"
                 onClick={() => handleDelete(podcast._id)}
               >
-                <FontAwesomeIcon icon={faTrashAlt} />
-                Delete
+                <FontAwesomeIcon icon={faTrashAlt} /> Delete
               </button>
             </div>
           </div>
@@ -106,28 +109,36 @@ function UserPodcasts() {
     <React.Fragment>
       {isLoading && <LoadingSpinner asOverlay />}
       <ErrorModal error={error} onClear={clearError} />
-      <div>
-        <div className="fav-container">
-          <input
-            type="text"
-            placeholder="Search Your Podcasts"
-            value={searchQuery}
-            onChange={handleSearchChange}
-          />
-          <FontAwesomeIcon
-            className="FontAwesomeIcon"
-            icon={faMagnifyingGlass}
-          />
-        </div>
-        <h3>Browse All</h3>
-        {fav.length > 0 ? (
-          <div>{renderPodcasts("Uploaded", fav)}</div>
-        ) : (
-          <div>
-            <p>No Podcasts Uploaded.</p>
+      {!editingPodcast && (
+        <div>
+          <div className="fav-container">
+            <input
+              type="text"
+              placeholder="Search Your Podcasts"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+            <FontAwesomeIcon
+              className="FontAwesomeIcon"
+              icon={faMagnifyingGlass}
+            />
           </div>
-        )}
-      </div>
+          <h3>Browse All</h3>
+          {fav.length > 0 ? (
+            <div>{renderPodcasts("Uploaded", fav)}</div>
+          ) : (
+            <div>
+              <p>No Podcasts Uploaded.</p>
+            </div>
+          )}
+        </div>
+      )}
+      {editingPodcast && (
+        <UploadPodcast
+          podcast={editingPodcast}
+          onEditSuccess={handleEditSuccess}
+        />
+      )}
     </React.Fragment>
   );
 }

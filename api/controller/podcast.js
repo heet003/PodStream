@@ -2,6 +2,7 @@ var express = require("express");
 var podRouter = express.Router();
 var db = require("../lib/database");
 var helper = require("../core/helper");
+const { duration } = require("moment");
 const ACCESSTOKEN = "AccessToken";
 let podcast = {};
 
@@ -65,10 +66,12 @@ podcast.podcastUpload = async (req, res) => {
     name,
     shareUrl: ``,
     explicit: isExplicit,
+    publisher,
     date: new Date().toISOString(),
     description,
     htmlDescription: `<p>${description}</p>`,
     durationText: formatDuration(durationText),
+    durationMs: durationText,
     audioPreviewUrl: audio,
     cover: [
       {
@@ -332,7 +335,7 @@ podcast.searchPodcast = async (req, res) => {
     });
 };
 
-podcast.deletePodcasts = async (req, res) => {
+podcast.deletePodcasts = (req, res) => {
   const { userId } = req.uSession;
   const { id } = req.params;
   var results;
@@ -365,10 +368,57 @@ podcast.deletePodcasts = async (req, res) => {
     });
 };
 
+podcast.editPodcast = (req, res) => {
+  const { userId } = req.uSession;
+  const { id } = req.params;
+
+  const { description, name, durationText, isExplicit, publisher } = req.body;
+
+  var results;
+  let promise = helper.paramValidate(
+    { code: 2010, val: !userId },
+    { code: 2010, val: !id }
+  );
+
+  promise
+    .then(async () => {
+      return await db._findOne("podcasts", { _id: id });
+    })
+    .then(async (p) => {
+      results = p[0];
+      if (!results) {
+        return Promise.reject(403);
+      }
+    })
+    .then(async () => {
+      return await db.update(
+        "podcasts",
+        { _id: id },
+        {
+          name,
+          description,
+          durationMs: durationText,
+          explicit: isExplicit,
+          publisher,
+        }
+      );
+    })
+    .then(async () => {
+      results = await db._find("podcasts", { userId });
+    })
+    .then(() => {
+      helper.success(res, { results });
+    })
+    .catch((e) => {
+      helper.error(res, e);
+    });
+};
+
 module.exports = function (app, uri) {
   podRouter.get("/", podcast.getAll);
   podRouter.post("/upload", podcast.podcastUpload);
   podRouter.get("/user-podcasts", podcast.userPodcasts);
+  podRouter.post("/edit/:id", podcast.editPodcast);
   podRouter.get("/delete/:id", podcast.deletePodcasts);
   podRouter.get("/:id", podcast.getPodcast);
   podRouter.get("/search/:search", podcast.searchPodcast);

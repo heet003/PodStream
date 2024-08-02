@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Radio, Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import "./UploadPodcast.css"; // Ensure this file exists and is styled
@@ -9,15 +9,25 @@ import ErrorModal from "../Shared/UIElements/ErrorModal";
 import LoadingSpinner from "../Shared/UIElements/LoadingSpinner";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-const UploadPodcast = () => {
+const UploadPodcast = ({ podcast, onEditSuccess }) => {
   const { token } = useAuth();
   const { isLoading, error, clearError, sendRequest } = useHttpClient();
   const [isUploading, setIsUploading] = useState(false);
-
   const [form] = Form.useForm();
 
+  useEffect(() => {
+    if (podcast) {
+      form.setFieldsValue({
+        name: podcast.name,
+        publisher: podcast.publisher,
+        isExplicit: podcast.explicit,
+        description: podcast.description,
+        duration: podcast.durationMs,
+      });
+    }
+  }, [podcast, form]);
+
   const handleUpload = async (values) => {
-    console.log(values);
     const formData = new FormData();
     formData.append("name", values.name);
     formData.append("publisher", values.publisher);
@@ -26,45 +36,56 @@ const UploadPodcast = () => {
     formData.append("durationText", values.duration);
     setIsUploading(true);
 
-    // Upload audio file
-    if (values.audio  && values.audio.originFileObj) {
-      const audioFile = values.audio.originFileObj;
-      const audioRef = ref(storage, `podcasts/${audioFile.name}`);
-      try {
-        await uploadBytes(audioRef, audioFile);
-        const audioUrl = await getDownloadURL(audioRef);
-        formData.append("audio", audioUrl);
-      } catch (error) {
-        console.error("Error uploading audio file:", error);
+    if (podcast) {
+      // Upload audio file
+      if (values.audio && values.audio.originFileObj) {
+        const audioFile = values.audio.originFileObj;
+        const audioRef = ref(storage, `podcasts/${audioFile.name}`);
+        try {
+          await uploadBytes(audioRef, audioFile);
+          const audioUrl = await getDownloadURL(audioRef);
+          formData.append("audio", audioUrl);
+        } catch (error) {
+          console.error("Error uploading audio file:", error);
+        }
       }
-    }
 
-    // Upload cover image
-    if (values.cover && values.cover.originFileObj) {
-      const coverFile = values.cover.originFileObj;
-      const coverRef = ref(storage, `covers/${values.cover.name}`);
-      try {
-        await uploadBytes(coverRef, coverFile);
-        const coverUrl = await getDownloadURL(coverRef);
-        formData.append("cover", coverUrl);
-      } catch (error) {
-        console.error("Error uploading cover image:", error);
+      // Upload cover image
+      if (values.cover && values.cover.originFileObj) {
+        const coverFile = values.cover.originFileObj;
+        const coverRef = ref(storage, `covers/${values.cover.name}`);
+        try {
+          await uploadBytes(coverRef, coverFile);
+          const coverUrl = await getDownloadURL(coverRef);
+          formData.append("cover", coverUrl);
+        } catch (error) {
+          console.error("Error uploading cover image:", error);
+        }
       }
     }
 
     try {
-      await sendRequest(
-        "http://localhost:5000/api/podcasts/upload",
-        "POST",
-        formData,
-        {
-          Authorization: `Bearer ${token}`,
-        }
+      const url = podcast
+        ? `http://localhost:5000/api/podcasts/edit/${podcast._id}`
+        : "http://localhost:5000/api/podcasts/upload";
+      const method = "POST";
+      console.log(formData);
+      await sendRequest(url, method, formData, {
+        // "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      });
+      message.success(
+        `Podcast ${podcast ? "edited" : "uploaded"} successfully!`
       );
-      message.success("Podcast uploaded successfully!");
       form.resetFields();
+      if (podcast) {
+        onEditSuccess();
+      }
     } catch (error) {
-      message.error("Failed to upload podcast. Please try again.");
+      console.log(error);
+      message.error(
+        `Failed to ${podcast ? "edit" : "upload"} podcast. Please try again.`
+      );
     } finally {
       setIsUploading(false);
     }
@@ -74,7 +95,7 @@ const UploadPodcast = () => {
     <div className="upload-podcast">
       {isLoading && <LoadingSpinner asOverlay />}
       <ErrorModal error={error} onClear={clearError} />
-      <h2>Upload Podcast</h2>
+      <h2>{podcast ? "Edit Podcast" : "Upload Podcast"}</h2>
       <Form
         form={form}
         layout="vertical"
@@ -121,38 +142,53 @@ const UploadPodcast = () => {
         >
           <Input type="number" />
         </Form.Item>
-        <Form.Item
-          label="Audio File"
-          name="audio"
-          valuePropName="file"
-          getValueFromEvent={(e) => e.fileList[0]}
-          rules={[{ required: true, message: "Please upload audio file" }]}
-        >
-          <Upload
-            name="audio"
-            beforeUpload={() => false}
-            accept=".mp3,.wav"
-            maxCount={1}
-          >
-            <Button icon={<UploadOutlined />}>Select Audio</Button>
-          </Upload>
-        </Form.Item>
-        <Form.Item
-          label="Cover Thumbnail"
-          name="cover"
-          valuePropName="file"
-          getValueFromEvent={(e) => e.fileList[0]}
-          rules={[{ required: true, message: "Please upload cover thumbnail" }]}
-        >
-          <Upload
-            name="cover"
-            beforeUpload={() => false}
-            accept=".jpg,.jpeg,.png"
-            maxCount={1}
-          >
-            <Button icon={<UploadOutlined />}>Select Cover</Button>
-          </Upload>
-        </Form.Item>
+
+        {!podcast && (
+          <React.Fragment>
+            <Form.Item
+              label="Audio File"
+              name="audio"
+              valuePropName="file"
+              getValueFromEvent={(e) => e.fileList[0]}
+              rules={[
+                {
+                  required: podcast ? false : true,
+                  message: "Please upload audio file",
+                },
+              ]}
+            >
+              <Upload
+                name="audio"
+                beforeUpload={() => false}
+                accept=".mp3,.wav"
+                maxCount={1}
+              >
+                <Button icon={<UploadOutlined />}>Select Audio</Button>
+              </Upload>
+            </Form.Item>
+            <Form.Item
+              label="Cover Thumbnail"
+              name="cover"
+              valuePropName="file"
+              getValueFromEvent={(e) => e.fileList[0]}
+              rules={[
+                {
+                  required: podcast ? false : true,
+                  message: "Please upload cover thumbnail",
+                },
+              ]}
+            >
+              <Upload
+                name="cover"
+                beforeUpload={() => false}
+                accept=".jpg,.jpeg,.png"
+                maxCount={1}
+              >
+                <Button icon={<UploadOutlined />}>Select Cover</Button>
+              </Upload>
+            </Form.Item>
+          </React.Fragment>
+        )}
         <Form.Item>
           <Button
             type="primary"
@@ -160,7 +196,7 @@ const UploadPodcast = () => {
             loading={isUploading}
             disabled={isUploading}
           >
-            Upload
+            {podcast ? "Edit" : "Upload"}
           </Button>
         </Form.Item>
       </Form>
