@@ -181,6 +181,7 @@ db.update = function (collectionName, condition, update) {
     if (
       !("$addToSet" in update) &&
       !("$pull" in update) &&
+      !("$push" in update) &&
       !("$inc" in update)
     ) {
       update = { $set: update };

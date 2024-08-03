@@ -5,9 +5,12 @@ import ErrorModal from "../Shared/UIElements/ErrorModal";
 import UsersList from "./UserList";
 import { useAuth } from "../hooks/auth-hook";
 import PodcastsList from "./PodcastList";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import AdminsList from "./AdminList";
 import "./Admin.css";
 import CountUp from "react-countup";
+import { Link } from "react-router-dom";
 
 const Admin = () => {
   const { token, role } = useAuth();
@@ -52,8 +55,14 @@ const Admin = () => {
     <React.Fragment>
       {isLoading && <LoadingSpinner asOverlay />}
       <ErrorModal error={error} onClear={clearError} />
-      <div>
-        <h1>Admin Panel</h1>
+      <div className="admin-panel">
+        <div className="admin-header">
+          <h1>Admin Panel</h1>
+          <Link to={`/add-user`} className="add-icon">
+            <FontAwesomeIcon icon={faPlus} style={{ color: "#fff" }} />
+            Users
+          </Link>
+        </div>
         <div className="stats">
           <button onClick={() => setActiveTab("users")}>
             <h3>

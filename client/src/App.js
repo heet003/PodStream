@@ -21,6 +21,7 @@ import UserProfile from "./components/UserProfile/UserProfile";
 import UploadPodcast from "./components/UploadPodcast/UploadPodcast";
 import UserPodcasts from "./components/UserPodcasts/UserPodcasts";
 import Admin from "./components/Admin/Admin";
+import AddUser from "./components/Admin/AddUser";
 
 const App = () => {
   const { token, login, logout, role } = useAuth();
@@ -55,6 +56,7 @@ const App = () => {
           <Route path="/search" element={<SearchPodcast />} />
           <Route path="/favourites" element={<Favourites />} />
           <Route path="/pod-library" element={<UserPodcasts />} />
+          <Route path="/add-user" element={<AddUser />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       );

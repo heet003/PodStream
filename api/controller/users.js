@@ -186,10 +186,12 @@ user.signup = (req, res) => {
           phone,
           address,
           bio,
-          imageUrl:"",
+          imageUrl: "",
           password: hash,
           searchHistory: [],
           watchHistory: [],
+          uploaded: [],
+          createdAt: new Date(),
         };
         return await db.insert("users", newUser);
       }

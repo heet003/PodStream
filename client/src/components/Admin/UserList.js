@@ -5,12 +5,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import ErrorModal from "../Shared/UIElements/ErrorModal";
 import { useAuth } from "../hooks/auth-hook";
+import AddUser from "./AddUser";
 import "./Admin.css";
 
 const UserList = () => {
   const { token, role } = useAuth();
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [users, setUsers] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -43,6 +46,16 @@ const UserList = () => {
     } catch (err) {}
   };
 
+  const editUser = (user) => {
+    setSelectedUser(user);
+    setIsEditing(true);
+  };
+
+  const closeEditMode = () => {
+    setSelectedUser(null);
+    setIsEditing(false);
+  };
+
   const renderUsers = () =>
     users.map((user) => (
       <div key={user._id} className="user-card">
@@ -73,7 +86,7 @@ const UserList = () => {
           <p>
             <strong>Bio:</strong> {user.bio}
           </p>
-          <button className="edit-icon">
+          <button className="edit-icon" onClick={() => editUser(user)}>
             <FontAwesomeIcon icon={faEdit} /> Edit
           </button>
           <button className="delete-icon" onClick={() => deleteUser(user._id)}>
@@ -87,9 +100,20 @@ const UserList = () => {
     <React.Fragment>
       {isLoading && <LoadingSpinner asOverlay />}
       <ErrorModal error={error} onClear={clearError} />
+      {!isEditing && (
+        <div>
+          <h2>Users</h2>
+          {renderUsers()}
+        </div>
+      )}
       <div>
-        <h2>Users</h2>
-        {renderUsers()}
+        {isEditing && (
+          <AddUser
+            user={selectedUser}
+            onClose={closeEditMode}
+            setUsers={setUsers}
+          />
+        )}
       </div>
     </React.Fragment>
   );

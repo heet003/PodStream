@@ -116,11 +116,17 @@ podcast.podcastUpload = async (req, res) => {
     .then(async () => {
       return await db.insert("podcasts", podcastObject);
     })
-    .then((p) => {
-      podcasts = p;
-      if (!podcasts) {
+    .then(async (id) => {
+      if (!id) {
         return Promise.reject(403);
       }
+      return await db.update(
+        "users",
+        { _id: userId },
+        {
+          $push: { uploaded: id },
+        }
+      );
     })
     .then(() => helper.success(res, { podcasts }))
     .catch((e) => {
@@ -355,7 +361,14 @@ podcast.deletePodcasts = (req, res) => {
       }
     })
     .then(async () => {
-      return await db.delete("podcasts", { _id: id });
+      await db.delete("podcasts", { _id: id });
+      await db.update(
+        "users",
+        { _id: userId },
+        {
+          $pull: { uploaded: id },
+        }
+      );
     })
     .then(async () => {
       results = await db._find("podcasts", { userId });

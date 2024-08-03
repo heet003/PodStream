@@ -1,3 +1,35 @@
+.admin-panel {
+    padding: 2rem;
+}
+
+.admin-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.add-user-form h2{
+    text-align: center;
+}
+
+.add-icon {
+    border: none;
+    margin: 1rem;
+    padding: 1rem;
+    border-radius: 20%;
+    background-color: #fca3a3;
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: border-radius 0.3s ease-in-out;
+}
+
+.add-icon:hover {
+    border-radius: 5%;
+    background-color: #dea2a2;
+}
+
 .stats {
     padding: 1rem;
     margin: 1rem;
@@ -38,12 +70,12 @@
     transition: transform 0.5s ease-in-out;
 }
 
-.user-card p{
+.user-card p {
     color: #858585;
-    word-wrap:normal;
+    word-wrap: normal;
 }
 
-.user-card strong{
+.user-card strong {
     color: rgb(255, 255, 255);
 }
 
@@ -51,7 +83,7 @@
     transform: translateY(-10px);
 }
 
-.user-card-img{
+.user-card-img {
     width: 50%;
 }
 
@@ -59,4 +91,41 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+}
+
+
+.add-user-form {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #15171E;
+    border-radius: 8px;
+}
+
+.add-user-form .ant-form-item-label>label {
+    color: #fca3a3;
+}
+
+.add-user-form .ant-btn-primary {
+    background: #8c00ff;
+    border-color: #8c00ff;
+}
+
+.add-user-form .ant-radio-wrapper {
+    color: #fca3a3;
+}
+
+.add-user-form .ant-input,
+.add-user-form .ant-input-textarea {
+    background: #2a2d34;
+    color: #fca3a3;
+    border-color: #2a2d34;
+}
+
+.add-user-form .ant-input:focus,
+.add-user-form .ant-input-focused,
+.add-user-form .ant-input-textarea:focus,
+.add-user-form .ant-input-textarea-focused {
+    border-color: #8c00ff;
+    box-shadow: 0 0 0 2px rgba(140, 0, 255, 0.2);
 }

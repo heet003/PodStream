@@ -6,11 +6,14 @@ import { useAuth } from "../hooks/auth-hook";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import "./Admin.css";
+import AddUser from "./AddUser";
 
 const AdminList = () => {
   const { token, role } = useAuth();
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [admins, setAdmins] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
     const fetchAdmins = async () => {
@@ -49,6 +52,16 @@ const AdminList = () => {
     }
   };
 
+  const editUser = (user) => {
+    setSelectedUser(user);
+    setIsEditing(true);
+  };
+
+  const closeEditMode = () => {
+    setSelectedUser(null);
+    setIsEditing(false);
+  };
+
   const renderAdmins = () =>
     admins.map((user) => (
       <div key={user._id} className="user-card">
@@ -79,7 +92,7 @@ const AdminList = () => {
           <p>
             <strong>Bio:</strong> {user.bio}
           </p>
-          <button className="edit-icon">
+          <button className="edit-icon" onClick={() => editUser(user)}>
             <FontAwesomeIcon icon={faEdit} /> Edit
           </button>
           <button className="delete-icon" onClick={() => deleteUser(user._id)}>
@@ -93,9 +106,20 @@ const AdminList = () => {
     <React.Fragment>
       {isLoading && <LoadingSpinner asOverlay />}
       <ErrorModal error={error} onClear={clearError} />
+      {!isEditing && (
+        <div>
+          <h2>ADMINS</h2>
+          {renderAdmins()}
+        </div>
+      )}
       <div>
-        <h2>ADMINS</h2>
-        {renderAdmins()}
+        {isEditing && (
+          <AddUser
+            user={selectedUser}
+            onClose={closeEditMode}
+            setUsers={setAdmins}
+          />
+        )}
       </div>
     </React.Fragment>
   );
