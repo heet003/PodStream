@@ -5,6 +5,7 @@ import { useAuth } from "../hooks/auth-hook";
 import {
   faMicrophone,
   faArrowRightToBracket,
+  faGears,
   faHeart,
   faCloudArrowUp,
   faPhotoFilm,
@@ -34,6 +35,18 @@ function SideBar({ isOpen, onClose }) {
                 DashBoard
               </Link>
             </li>
+            {token && role === "admin" && (
+              <li>
+                <Link to={`/admin`} className="w3-button">
+                  <FontAwesomeIcon
+                    className="FontAwesomeIcon"
+                    icon={faGears}
+                    style={{ color: "#ffffff" }}
+                  />
+                  Admin Panel
+                </Link>
+              </li>
+            )}
             <li>
               <Link to={`/search`} className="w3-button">
                 <FontAwesomeIcon
@@ -50,7 +63,7 @@ function SideBar({ isOpen, onClose }) {
               </Link>
             </li>
             <hr />
-            {token && role === "creator" && (
+            {token && role !== "user" && (
               <li>
                 <Link to={`/upload`} className="w3-button">
                   <FontAwesomeIcon
@@ -61,7 +74,7 @@ function SideBar({ isOpen, onClose }) {
                 </Link>
               </li>
             )}
-            {token && role === "creator" && (
+            {token && role !== "user" && (
               <li>
                 <Link to={`/pod-library`} className="w3-button">
                   <FontAwesomeIcon

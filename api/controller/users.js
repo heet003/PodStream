@@ -186,6 +186,7 @@ user.signup = (req, res) => {
           phone,
           address,
           bio,
+          imageUrl:"",
           password: hash,
           searchHistory: [],
           watchHistory: [],

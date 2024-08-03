@@ -1,0 +1,62 @@
+.stats {
+    padding: 1rem;
+    margin: 1rem;
+    display: flex;
+}
+
+.stats button {
+    background-color: transparent;
+    border: none;
+    border-radius: 1rem;
+    cursor: pointer;
+    color: white;
+    padding: 1rem 2rem;
+    margin: 1rem auto;
+    transition: background-color 0.5s ease-in-out;
+}
+
+.stats button:hover {
+    border: none;
+    background-color: white;
+    color: black;
+}
+
+.user-card {
+    padding: 1rem;
+    margin: 2rem 1rem;
+    border-bottom: 1px solid white;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.user-card img {
+    border: 2px solid white;
+    width: 90%;
+    cursor: pointer;
+    border-radius: 20px;
+    transition: transform 0.5s ease-in-out;
+}
+
+.user-card p{
+    color: #858585;
+    word-wrap:normal;
+}
+
+.user-card strong{
+    color: rgb(255, 255, 255);
+}
+
+.user-card img:hover {
+    transform: translateY(-10px);
+}
+
+.user-card-img{
+    width: 50%;
+}
+
+.admin-podcasts {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}

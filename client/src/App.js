@@ -20,6 +20,7 @@ import PodcastDetails from "./components/Shared/UIElements/PodcastDetails";
 import UserProfile from "./components/UserProfile/UserProfile";
 import UploadPodcast from "./components/UploadPodcast/UploadPodcast";
 import UserPodcasts from "./components/UserPodcasts/UserPodcasts";
+import Admin from "./components/Admin/Admin";
 
 const App = () => {
   const { token, login, logout, role } = useAuth();
@@ -40,6 +41,20 @@ const App = () => {
           <Route path="/favourites" element={<Favourites />} />
           <Route path="/podcast/:id" element={<PodcastDetails />} />
           <Route path="/search" element={<SearchPodcast />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      );
+    } else if (role === "admin") {
+      routes = (
+        <Routes>
+          <Route path="/" element={<DashBoard />} />
+          <Route path="/profile" element={<UserProfile />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/upload" element={<UploadPodcast />} />
+          <Route path="/podcast/:id" element={<PodcastDetails />} />
+          <Route path="/search" element={<SearchPodcast />} />
+          <Route path="/favourites" element={<Favourites />} />
+          <Route path="/pod-library" element={<UserPodcasts />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       );

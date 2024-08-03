@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Radio, Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import "./UploadPodcast.css"; 
+import "./UploadPodcast.css"; // Ensure this file exists and is styled
 import { useAuth } from "../hooks/auth-hook";
 import { storage } from "./firebase";
 import { useHttpClient } from "../hooks/http-hook";
@@ -20,7 +20,7 @@ const UploadPodcast = ({ podcast, onEditSuccess }) => {
       form.setFieldsValue({
         name: podcast.name,
         publisher: podcast.publisher,
-        isExplicit: podcast.explicit,
+        isExplicit: podcast.explicit === "true" ? "true" : "false",
         description: podcast.description,
         duration: podcast.durationMs,
       });
@@ -36,6 +36,7 @@ const UploadPodcast = ({ podcast, onEditSuccess }) => {
     formData.append("durationText", values.duration);
     setIsUploading(true);
 
+    // Upload audio file
     if (values.audio && values.audio.originFileObj) {
       const audioFile = values.audio.originFileObj;
       const audioRef = ref(storage, `podcasts/${audioFile.name}`);
@@ -48,6 +49,7 @@ const UploadPodcast = ({ podcast, onEditSuccess }) => {
       }
     }
 
+    // Upload cover image
     if (values.cover && values.cover.originFileObj) {
       const coverFile = values.cover.originFileObj;
       const coverRef = ref(storage, `covers/${values.cover.name}`);
@@ -66,6 +68,7 @@ const UploadPodcast = ({ podcast, onEditSuccess }) => {
         : "http://localhost:5000/api/podcasts/upload";
       const method = "POST";
       await sendRequest(url, method, formData, {
+        // "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       });
       message.success(
@@ -94,7 +97,7 @@ const UploadPodcast = ({ podcast, onEditSuccess }) => {
         form={form}
         layout="vertical"
         onFinish={handleUpload}
-        initialValues={{ isExplicit: false }}
+        initialValues={{ isExplicit: "false" }}
       >
         <Form.Item
           label="Podcast Name"
@@ -116,8 +119,8 @@ const UploadPodcast = ({ podcast, onEditSuccess }) => {
           rules={[{ required: true, message: "Please select content rating" }]}
         >
           <Radio.Group>
-            <Radio value={true}>Yes</Radio>
-            <Radio value={false}>No</Radio>
+            <Radio value="true">Yes</Radio>
+            <Radio value="false">No</Radio>
           </Radio.Group>
         </Form.Item>
         <Form.Item
