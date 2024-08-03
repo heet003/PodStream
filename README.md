@@ -27,4 +27,4 @@ To get started with PodStream locally, follow these steps:
 1. **Clone the Repository:**
 
    ```bash
-   git clone https://github.com/your-username/podstream.git
+   git clone https://github.com/heet003/PodStream.git
