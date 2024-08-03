@@ -7,10 +7,9 @@ PodStream is a modern podcast streaming web application that allows users to dis
 - **User Authentication:** Secure login and registration for personalized podcast management.
 - **Podcast Discovery:** Browse and search for podcasts across various categories.
 - **Podcast Playback:** Stream podcast episodes with playback controls.
-- **Subscription Management:** Subscribe to podcasts and receive updates on new episodes.
 - **Personal Playlist:** Create and manage a personal playlist of favorite episodes.
 - **Admin Panel:** Manage users, podcasts, and view statistics in the admin panel.
-- **Responsive Design:** Optimized for both desktop and mobile devices.
+
 
 ## Technologies Used
 
