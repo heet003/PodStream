@@ -1,13 +1,14 @@
 import React, { useState, useContext } from "react";
-import "./Auth.css";
-import Button from "../Shared/FormElements/Button";
+import { Form, Input, Button, Typography, message } from "antd";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/auth-context";
+import { useHttpClient } from "../hooks/http-hook";
+import Otp from "./Otp";
 import ErrorModal from "../Shared/UIElements/ErrorModal";
 import LoadingSpinner from "../Shared/UIElements/LoadingSpinner";
-import { useHttpClient } from "../hooks/http-hook";
-import { AuthContext } from "../context/auth-context";
-import { useNavigate } from "react-router-dom";
-import Otp from "./Otp";
-import { message } from "antd";
+import "./Auth.css";
+
+const { Title } = Typography;
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -17,39 +18,20 @@ const Auth = () => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [isLoginMode, setIsLoginMode] = useState(true);
 
-  const [formState, setFormState] = useState({
-    name: {
-      value: "",
-    },
-    email: {
-      value: "",
-    },
-    password: {
-      value: "",
-    },
-    phone: {
-      value: "",
-    },
-    address: {
-      value: "",
-    },
-    bio: {
-      value: "",
-    },
-  });
+  const [form] = Form.useForm();
 
   const switchModeHandler = () => {
     setIsLoginMode((prevMode) => !prevMode);
+    form.resetFields(); // Clear form fields when switching modes
   };
 
-  const handleVerifyOtp = async (event) => {
-    event.preventDefault();
+  const handleVerifyOtp = async (values) => {
     try {
       const responseData = await sendRequest(
         "http://localhost:5000/api/users/verify-otp",
         "POST",
         JSON.stringify({
-          email: formState.email.value,
+          email: form.getFieldValue("email"),
           otp: otpValue,
         }),
         {
@@ -66,20 +48,7 @@ const Auth = () => {
     }
   };
 
-  const inputHandler = (id, value, type = "text") => {
-    setFormState((prevState) => ({
-      ...prevState,
-      [id]: {
-        value:
-          type === "checkbox"
-            ? { ...prevState[id].value, [value]: !prevState[id].value[value] }
-            : value,
-      },
-    }));
-  };
-
-  const authSubmitHandler = async (event) => {
-    event.preventDefault();
+  const authSubmitHandler = async (values) => {
     let responseData;
     try {
       if (isLoginMode) {
@@ -87,8 +56,8 @@ const Auth = () => {
           "http://localhost:5000/api/users/login",
           "POST",
           JSON.stringify({
-            email: formState.email.value,
-            password: formState.password.value,
+            email: values.email,
+            password: values.password,
           }),
           {
             "Content-Type": "application/json",
@@ -99,12 +68,12 @@ const Auth = () => {
           "http://localhost:5000/api/users/signup",
           "POST",
           JSON.stringify({
-            name: formState.name.value,
-            email: formState.email.value,
-            password: formState.password.value,
-            phone: formState.phone.value,
-            address: formState.address.value,
-            bio: formState.bio.value,
+            name: values.name,
+            email: values.email,
+            password: values.password,
+            phone: values.phone,
+            address: values.address,
+            bio: values.bio,
           }),
           {
             "Content-Type": "application/json",
@@ -137,63 +106,86 @@ const Auth = () => {
         />
       ) : (
         <div className="authentication">
-          <h2 className="form_header">{isLoginMode ? "Login" : "Signup"}</h2>
+          <Title level={2} style={{ color: "white" }} className="form_header">
+            {isLoginMode ? "Login" : "Signup"}
+          </Title>
           <hr />
-          <form className="auth_form" onSubmit={authSubmitHandler}>
+          <Form
+            form={form}
+            className="auth_form"
+            onFinish={authSubmitHandler}
+            initialValues={{ remember: true }}
+          >
             {!isLoginMode && (
               <React.Fragment>
-                <label htmlFor="name">Name:</label>
-                <input
-                  id="name"
-                  type="text"
-                  placeholder="John Doe"
-                  onChange={(e) => inputHandler("name", e.target.value)}
-                  value={formState.name.value}
-                />
-                <label htmlFor="phone">Phone:</label>
-                <input
-                  id="phone"
-                  type="tel"
-                  placeholder="12354567890"
-                  onChange={(e) => inputHandler("phone", e.target.value)}
-                  value={formState.phone.value}
-                />
-                <label htmlFor="address">Address:</label>
-                <input
-                  id="address"
-                  type="text"
-                  placeholder="123 Bleeker Street, New York"
-                  onChange={(e) => inputHandler("address", e.target.value)}
-                  value={formState.address.value}
-                />
-                <label htmlFor="bio">Bio (Optional):</label>
-                <textarea
-                  id="bio"
-                  placeholder="Your hobbies, interests, goals."
-                  onChange={(e) => inputHandler("bio", e.target.value)}
-                  value={formState.bio.value}
-                />
+                <Form.Item
+                  label="Name"
+                  name="name"
+                  rules={[
+                    {
+                      required: !isLoginMode,
+                      message: "Please input your name!",
+                    },
+                  ]}
+                >
+                  <Input placeholder="John Doe" />
+                </Form.Item>
+                <Form.Item
+                  label="Phone"
+                  name="phone"
+                  rules={[
+                    {
+                      required: !isLoginMode,
+                      message: "Please input your phone number!",
+                    },
+                  ]}
+                >
+                  <Input type="tel" placeholder="1234567890" />
+                </Form.Item>
+                <Form.Item
+                  label="Address"
+                  name="address"
+                  rules={[
+                    {
+                      required: !isLoginMode,
+                      message: "Please input your address!",
+                    },
+                  ]}
+                >
+                  <Input placeholder="123 Bleeker Street, New York" />
+                </Form.Item>
+                <Form.Item label="Bio (Optional)" name="bio">
+                  <Input.TextArea placeholder="Your hobbies, interests, goals." />
+                </Form.Item>
               </React.Fragment>
             )}
-            <label htmlFor="email">Email:</label>
-            <input
-              id="email"
-              type="email"
-              placeholder="abc@gmail.com"
-              onChange={(e) => inputHandler("email", e.target.value)}
-              value={formState.email.value}
-            />
-            <label htmlFor="password">Password:</label>
-            <input
-              id="password"
-              type="password"
-              placeholder="123456"
-              onChange={(e) => inputHandler("password", e.target.value)}
-              value={formState.password.value}
-            />
-            <Button type="submit">{isLoginMode ? "LOGIN" : "SIGNUP"}</Button>
-          </form>
-          <Button inverse onClick={switchModeHandler}>
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[{ required: true, message: "Please input your email!" }]}
+            >
+              <Input type="email" placeholder="abc@gmail.com" />
+            </Form.Item>
+            <Form.Item
+              label="Password"
+              name="password"
+              rules={[
+                { required: true, message: "Please input your password!" },
+              ]}
+            >
+              <Input.Password placeholder="123456" />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                {isLoginMode ? "LOGIN" : "SIGNUP"}
+              </Button>
+            </Form.Item>
+          </Form>
+          <Button
+            type="default"
+            onClick={switchModeHandler}
+            className="switch-mode-button"
+          >
             SWITCH TO {isLoginMode ? "SIGNUP" : "LOGIN"}
           </Button>
         </div>

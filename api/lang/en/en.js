@@ -16,8 +16,7 @@ const message = {
     httpCode: 400,
   },
   1003: {
-    message:
-      "User Not Found",
+    message: "User Not Found",
     httpCode: 400,
   },
   1004: {
@@ -46,6 +45,10 @@ const message = {
   },
   2005: {
     message: "password should be greater than 6 and less than 20",
+    httpCode: 400,
+  },
+  2010: {
+    message: "Email Already Exists",
     httpCode: 400,
   },
 };

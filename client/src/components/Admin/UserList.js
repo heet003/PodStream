@@ -39,8 +39,12 @@ const UserList = () => {
   const deleteUser = async (userId) => {
     try {
       await sendRequest(
-        `http://localhost:5000/api/admins/users/${userId}`,
-        "DELETE"
+        `http://localhost:5000/api/admins/delete/${userId}`,
+        "GET",
+        null,
+        {
+          Authorization: `Bearer ${token}`,
+        }
       );
       setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
     } catch (err) {}

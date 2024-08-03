@@ -29,11 +29,11 @@ const UploadPodcast = ({ podcast, onEditSuccess }) => {
 
   const handleUpload = async (values) => {
     const formData = new FormData();
-    formData.append("name", values.name);
-    formData.append("publisher", values.publisher);
-    formData.append("isExplicit", values.isExplicit);
-    formData.append("description", values.description);
-    formData.append("durationText", values.duration);
+    formData.append("name", values.name || podcast.name);
+    formData.append("publisher", values.publisher || podcast.publisher);
+    formData.append("isExplicit", values.isExplicit || podcast.explicit);
+    formData.append("description", values.description || podcast.description);
+    formData.append("durationText", values.duration || podcast.durationMs);
     setIsUploading(true);
 
     // Upload audio file

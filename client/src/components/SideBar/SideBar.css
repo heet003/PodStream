@@ -60,7 +60,8 @@
 }
 
 .sidebar a.active {
-    background-color: #666;
+    color: black;
+    background-color: #ffffff;
 }
 
 .logout-button a {

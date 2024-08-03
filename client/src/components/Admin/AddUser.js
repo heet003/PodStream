@@ -39,6 +39,10 @@ const AddUser = ({ user, onClose, setUsers }) => {
     formData.append("address", values.address || user.address);
     formData.append("bio", values.bio || user.bio);
 
+    if (values.password) {
+      formData.append("password", values.password);
+    }
+
     setIsUploading(true);
 
     // Upload image to Firebase
@@ -62,24 +66,19 @@ const AddUser = ({ user, onClose, setUsers }) => {
         : "http://localhost:5000/api/admins/add-user";
       const method = "POST";
 
-      const response = await sendRequest(url, method, formData, {
+      await sendRequest(url, method, formData, {
         Authorization: `Bearer ${token}`,
       });
 
       if (user) {
-        setUsers((prevUsers) =>
-          prevUsers.map((u) => (u._id === user._id ? response.user : u))
-        );
         message.success("User updated successfully!");
       } else {
-        setUsers((prevUsers) => [...prevUsers, response.user]);
         message.success("User added successfully!");
       }
 
       form.resetFields();
-      onClose();
     } catch (error) {
-      message.error("Failed to save user.");
+      message.error(error);
     } finally {
       setIsUploading(false);
     }
@@ -116,19 +115,34 @@ const AddUser = ({ user, onClose, setUsers }) => {
         </Form.Item>
 
         {!user && (
-          <Form.Item
-            name="email"
-            label={<span style={{ color: "#fff" }}>Email</span>}
-            rules={[
-              {
-                required: true,
-                type: "email",
-                message: "Please input a valid email!",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
+          <>
+            <Form.Item
+              name="email"
+              label={<span style={{ color: "#fff" }}>Email</span>}
+              rules={[
+                {
+                  required: true,
+                  type: "email",
+                  message: "Please input a valid email!",
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              name="password"
+              label={<span style={{ color: "#fff" }}>Password</span>}
+              rules={[
+                {
+                  required: true,
+                  message: "Please input the password!",
+                },
+              ]}
+            >
+              <Input.Password />
+            </Form.Item>
+          </>
         )}
 
         <Form.Item

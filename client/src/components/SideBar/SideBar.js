@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAuth } from "../hooks/auth-hook";
 import {
@@ -21,91 +21,121 @@ function SideBar({ isOpen, onClose }) {
       <div className={`sidebar ${isOpen ? "open" : "closed"}`}>
         <div>
           <div className="logo-container">
-            <FontAwesomeIcon
-              className="logo-FontAwesomeIcon"
-              icon={faMicrophone}
-              style={{ color: "#ff8a8a", fontSize: "1.5rem" }}
-            />
-            <span>PODSTREAM</span>
+            <NavLink to={`/auth`} className="w3-button">
+              <FontAwesomeIcon
+                className="logo-FontAwesomeIcon"
+                icon={faMicrophone}
+                style={{ color: "#ff8a8a", fontSize: "1.5rem" }}
+              />
+              <span>PODSTREAM</span>
+            </NavLink>
           </div>
           <ul>
             <li>
-              <Link to={`/`} className="w3-button">
+              <NavLink to={`/`} className="w3-button" activeClassName="active">
                 <FontAwesomeIcon className="FontAwesomeIcon" icon={faHouse} />
-                DashBoard
-              </Link>
+                Dashboard
+              </NavLink>
             </li>
             {token && role === "admin" && (
               <li>
-                <Link to={`/admin`} className="w3-button">
+                <NavLink
+                  to={`/admin`}
+                  className="w3-button"
+                  activeClassName="active"
+                >
                   <FontAwesomeIcon
                     className="FontAwesomeIcon"
                     icon={faGears}
                     style={{ color: "#ffffff" }}
                   />
                   Admin Panel
-                </Link>
+                </NavLink>
               </li>
             )}
             <li>
-              <Link to={`/search`} className="w3-button">
+              <NavLink
+                to={`/search`}
+                className="w3-button"
+                activeClassName="active"
+              >
                 <FontAwesomeIcon
                   className="FontAwesomeIcon"
                   icon={faMagnifyingGlass}
                 />
                 Search
-              </Link>
+              </NavLink>
             </li>
             <li>
-              <Link to={`/favourites`} className="w3-button">
+              <NavLink
+                to={`/favourites`}
+                className="w3-button"
+                activeClassName="active"
+              >
                 <FontAwesomeIcon className="FontAwesomeIcon" icon={faHeart} />
                 Favourites
-              </Link>
+              </NavLink>
             </li>
             <hr />
             {token && role !== "user" && (
               <li>
-                <Link to={`/upload`} className="w3-button">
+                <NavLink
+                  to={`/upload`}
+                  className="w3-button"
+                  activeClassName="active"
+                >
                   <FontAwesomeIcon
                     className="FontAwesomeIcon"
                     icon={faCloudArrowUp}
                   />
                   Upload
-                </Link>
+                </NavLink>
               </li>
             )}
             {token && role !== "user" && (
               <li>
-                <Link to={`/pod-library`} className="w3-button">
+                <NavLink
+                  to={`/pod-library`}
+                  className="w3-button"
+                  activeClassName="active"
+                >
                   <FontAwesomeIcon
                     className="FontAwesomeIcon"
                     icon={faPhotoFilm}
-                    style={{ color: "#ffffff" }}
                   />
                   My Podcasts
-                </Link>
+                </NavLink>
               </li>
             )}
             {token ? (
               <li className="logout-button">
-                <Link to={`/auth`} onClick={logout}>
+                <NavLink
+                  to={`/auth`}
+                  onClick={logout}
+                  className="w3-button"
+                  activeClassName="active"
+                >
                   <FontAwesomeIcon
                     className="FontAwesomeIcon"
                     icon={faArrowRightToBracket}
                     style={{ color: "red" }}
                   />
                   Logout
-                </Link>
+                </NavLink>
               </li>
             ) : (
               <li>
-                <Link to={`/auth`} className="w3-button">
+                <NavLink
+                  to={`/auth`}
+                  className="w3-button"
+                  activeClassName="active"
+                >
                   <FontAwesomeIcon
                     className="FontAwesomeIcon"
                     icon={faArrowRightToBracket}
                   />
                   Login
-                </Link>
+                </NavLink>
               </li>
             )}
           </ul>

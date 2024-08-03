@@ -7,11 +7,13 @@ import ErrorModal from "../Shared/UIElements/ErrorModal";
 import { useAuth } from "../hooks/auth-hook";
 import PodcastCard from "../Shared/UIElements/PodcastCard";
 import "./Admin.css";
+import UploadPodcast from "../UploadPodcast/UploadPodcast";
 
 const PodcastList = () => {
   const { token, role } = useAuth();
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [podcasts, setPodcasts] = useState([]);
+  const [editingPodcast, setEditingPodcast] = useState(null);
 
   useEffect(() => {
     const fetchPodcasts = async () => {
@@ -50,6 +52,14 @@ const PodcastList = () => {
     }
   };
 
+  const handleEdit = (podcast) => {
+    setEditingPodcast(podcast);
+  };
+
+  const handleEditSuccess = () => {
+    setEditingPodcast(null);
+  };
+
   const renderPodcasts = (genreName, podcasts) => (
     <React.Fragment>
       <h2>{genreName} Podcasts</h2>
@@ -58,7 +68,7 @@ const PodcastList = () => {
           {podcasts.map((podcast) => (
             <React.Fragment>
               <PodcastCard
-                key={podcast.id}
+                key={podcast._id}
                 id={podcast._id}
                 title={podcast.name}
                 name={podcast.podcast.name}
@@ -70,7 +80,10 @@ const PodcastList = () => {
                 releaseDate={podcast.date}
               />
               <div className="podcast-actions">
-                <button className="edit-icon">
+                <button
+                  className="edit-icon"
+                  onClick={() => handleEdit(podcast)}
+                >
                   <FontAwesomeIcon icon={faEdit} /> Edit
                 </button>
                 <button
@@ -91,7 +104,15 @@ const PodcastList = () => {
     <React.Fragment>
       {isLoading && <LoadingSpinner asOverlay />}
       <ErrorModal error={error} onClear={clearError} />
-      <div>{podcasts && renderPodcasts("Podcasts", podcasts)}</div>
+      {!editingPodcast && (
+        <div>{podcasts && renderPodcasts("Podcasts", podcasts)}</div>
+      )}{" "}
+      {editingPodcast && (
+        <UploadPodcast
+          podcast={editingPodcast}
+          onEditSuccess={handleEditSuccess}
+        />
+      )}
     </React.Fragment>
   );
 };

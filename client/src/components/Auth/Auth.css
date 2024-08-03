@@ -103,3 +103,55 @@
   font-size: 14px;
   color: #e74c3c;
 }
+
+
+
+
+.authentication {
+  background-color: #15171e;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.form_header {
+  margin-bottom: 10px;
+  font-size: 1.5rem;
+  text-align: center;
+  color: white;
+}
+
+.authentication hr {
+  border: none;
+  border-top: 1px solid #fca3a3;
+  margin: 20px 0;
+}
+
+.auth_form .ant-form-item {
+  margin-bottom: 15px;
+}
+
+.auth_form .ant-form-item label {
+  color: white;
+}
+
+.auth_form .ant-input,
+.auth_form .ant-input-password,
+.auth_form .ant-input-textarea {
+  background-color: #1e2330;
+  color: white;
+  border-radius: 4px;
+}
+
+.auth_form .ant-input::placeholder,
+.auth_form .ant-input-password::placeholder,
+.auth_form .ant-input-textarea::placeholder {
+  color: #9e9e9e;
+}
+
+.switch-mode-button {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+}

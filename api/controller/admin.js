@@ -159,7 +159,7 @@ admin.editUser = (req, res) => {
     })
     .then((user) => {
       if (user) {
-        helper.success(res, {user });
+        helper.success(res, { user });
       } else {
         return Promise.reject(1001);
       }
@@ -171,13 +171,15 @@ admin.editUser = (req, res) => {
 
 admin.addUser = (req, res) => {
   const { userId } = req.uSession;
-  const { role, name, email, address, phone, bio, imageUrl } = req.body;
+  const { role, name, email, address, phone, bio, imageUrl, password } =
+    req.body;
   let promise = helper.paramValidate(
     { code: 2010, val: !userId },
     { code: 2010, val: !role },
     { code: 2010, val: !name },
     { code: 2010, val: !email },
     { code: 2010, val: !address },
+    { code: 2010, val: !password },
     { code: 2010, val: !phone },
     { code: 2010, val: !bio },
     { code: 2010, val: !imageUrl }
@@ -185,6 +187,12 @@ admin.addUser = (req, res) => {
 
   promise
     .then(async () => {
+      return await db._findOne("users", { email });
+    })
+    .then(async (u) => {
+      if (u.length > 0) {
+        return Promise.reject(2010);
+      }
       return await db.insert("users", {
         name,
         role,
@@ -192,6 +200,7 @@ admin.addUser = (req, res) => {
         address,
         phone,
         imageUrl,
+        password: helper.md5(password),
         bio,
         searchHistory: [],
         watchHistory: [],
@@ -221,12 +230,40 @@ admin.addUser = (req, res) => {
     });
 };
 
+admin.deleteUser = (req, res) => {
+  const { userId } = req.uSession;
+  const { id } = req.params;
+
+  let promise = helper.paramValidate(
+    { code: 2010, val: !userId },
+    { code: 2010, val: !id }
+  );
+
+  promise
+    .then(async () => {
+      return await db._findOne("users", { _id: id });
+    })
+    .then(async (user) => {
+      if (user.length > 0) {
+        return await db.delete("users", { _id: id });
+      }
+      return Promise.reject(1003);
+    })
+    .then(() => {
+      helper.success(res, { message: "Success" });
+    })
+    .catch((error) => {
+      helper.error(res, error);
+    });
+};
+
 module.exports = function (app, uri) {
   adminRouter.get("/stats", admin.getStats);
   adminRouter.get("/users", admin.getUsers);
   adminRouter.get("/admin", admin.getAdmins);
   adminRouter.post("/edit/:id", admin.editUser);
   adminRouter.post("/add-user", admin.addUser);
+  adminRouter.get("/delete/:id", admin.deleteUser);
 
   app.use(uri, adminRouter);
 };

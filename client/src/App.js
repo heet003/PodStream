@@ -5,7 +5,6 @@ import {
   Navigate,
   Routes,
 } from "react-router-dom";
-
 import Auth from "./components/Auth/Auth";
 import SideBar from "./components/SideBar/SideBar";
 import NavBar from "./components/NavBar/NavBar";
